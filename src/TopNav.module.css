@@ -1,0 +1,26 @@
+
+h1 {
+    margin: 0 auto 0 0;
+    padding: 0;
+}
+
+header {
+    display: flex;
+    flex-direction: row;
+    background-color: #222;
+    padding: 1em;
+    justify-content: end;
+    align-items: center;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    display: flex;
+    flex-direction: row;
+}
+
+li {
+    margin: 0 10px;
+}

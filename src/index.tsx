@@ -4,12 +4,35 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+import Home from './routes/Home';
+import Leaderboard from './routes/Leaderboard';
+import Feedback from './routes/Feedback';
+
+import {
+  BrowserRouter,
+  Route,
+  Routes,
+  Navigate
+} from 'react-router-dom';
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
 root.render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<App />}>
+          <Route index element={<Home />} />
+          <Route path='/home' element={<Home />} />
+          <Route path='/leaderboard' element={<Leaderboard />} />
+          <Route path='/feedback' element={<Feedback />} />
+          <Route path="*" element={<Navigate to='/' />}>
+          </Route>
+        </Route>
+      </Routes>
+    </BrowserRouter>
   </React.StrictMode>
 );
 
