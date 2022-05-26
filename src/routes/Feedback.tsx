@@ -2,6 +2,9 @@
 
 export default function Feedback() {
     return (
-        <p>This is the feedback page</p>
+        <>
+            <h2>Feedback</h2>
+            <p>Coming soon</p>
+        </>
     )
 }

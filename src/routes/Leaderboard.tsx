@@ -2,6 +2,9 @@
 
 export default function Leaderboard() {
     return (
-        <p>This is the leaderboard</p>
+        <>
+            <h2>Leaderboard</h2>
+            <p>Coming soon</p>
+        </>
     )
 }
