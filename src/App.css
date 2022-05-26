@@ -5,7 +5,14 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 main {
+  flex: 1;
   padding: 1rem;
 }
 

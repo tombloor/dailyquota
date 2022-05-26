@@ -1,6 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
-import TopNav from './components/TopNav'
+import TopNav from './components/TopNav';
+import Footer from './components/Footer';
 import './App.css';
 
 import { Outlet } from 'react-router-dom';
@@ -10,12 +11,10 @@ function App() {
   return (
     <div className='app'>
       <TopNav siteName='Daily Quota' />
-      <main>
+      <main >
         <Outlet />
       </main>
-      <footer>
-        Footer content goes here
-      </footer>
+      <Footer />
     </div>
   );
 }
