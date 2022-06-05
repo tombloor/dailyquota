@@ -9,13 +9,11 @@ type DecoderItemProps = {
 }
 
 export function DecoderItem(props: DecoderItemProps) {
-
-    const [letter, setLetter] = useState(props.newLetter ?? props.originalLetter);
+    const letter = props.newLetter ?? props.originalLetter
 
     const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
         // Check that this is a letter
         if (event.key.length == 1 && event.key.toLowerCase() != event.key.toUpperCase()) {
-            setLetter(event.key.toLowerCase());
             props.handleChange(props.originalLetter, event.key.toLowerCase());
         } else {
             event.preventDefault();
