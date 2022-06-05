@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './Decoder.module.css';
+import styles from './Decoder.module.css';
 
 type DecoderItemProps = {
     originalLetter: string,
@@ -22,7 +22,7 @@ export function DecoderItem(props: DecoderItemProps) {
     }
 
     return (
-        <div>
+        <div className={styles.decoderItem}>
             <label>
                 {props.originalLetter}<br />
                 <input type='text' value={letter} onKeyDown={onKeyDown} readOnly={props.locked} onChange={()=>{}} />

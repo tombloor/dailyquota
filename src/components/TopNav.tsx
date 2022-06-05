@@ -6,7 +6,7 @@ import LeaderboardIcon from '@mui/icons-material/Leaderboard';
 import RateReviewIcon from '@mui/icons-material/RateReview';
 
 import '../App.css';
-import './TopNav.module.css';
+import styles from './TopNav.module.css';
 
 type NavProps = {
     siteName: string,
@@ -15,9 +15,9 @@ type NavProps = {
 export default function TopNav(props: NavProps) {
 
     return (
-        <header>
-            <h1>{props.siteName}</h1>
-            <ul>
+        <header className={styles.siteHeader}>
+            <h1 className={styles.siteTitle}>{props.siteName}</h1>
+            <ul className={styles.menu}>
                 <li>
                     <Link to='/home'>
                         <HomeIcon titleAccess='Home' to='/home' />

@@ -1,10 +1,10 @@
 
-h1 {
+.siteTitle {
     margin: 0 auto 0 0;
     padding: 0;
 }
 
-header {
+.siteHeader {
     display: flex;
     flex-direction: row;
     background-color: #222;
@@ -13,7 +13,7 @@ header {
     align-items: center;
 }
 
-ul {
+.menu {
     margin: 0;
     padding: 0;
     list-style-type: none;
@@ -21,11 +21,11 @@ ul {
     flex-direction: row;
 }
 
-li {
+.menu li {
     margin: 0 5px;
 }
 
-li a { 
+.menu li a { 
     display: flex;
     align-items: center;
     justify-content: center;
@@ -35,11 +35,11 @@ li a {
     transition: all 0.5s;
 }
 
-li a:hover {
+.menu li a:hover {
     background-color: #555;
 }
 
-li a:active::after {
+.menu li a:active::after {
     content: '';
     border-bottom: 1px solid white;
 }
