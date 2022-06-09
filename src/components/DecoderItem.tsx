@@ -2,11 +2,14 @@ import React, { useState } from 'react';
 import styles from './Decoder.module.css';
 
 type DecoderItemProps = {
+    index: number,
     originalLetter: string,
     newLetter?: string,
     locked?: boolean,
     handleChange: (originalLetter: string, letter: string) => void
 }
+
+//TODO: For mobile we're going to need to make our own onscreen keyboard to handle these
 
 export function DecoderItem(props: DecoderItemProps) {
     const letter = props.newLetter ?? props.originalLetter
@@ -21,13 +24,23 @@ export function DecoderItem(props: DecoderItemProps) {
         }
     }
 
+    const onFocus = (event: React.FocusEvent) => {
+        console.log(event);
+        event.currentTarget.parentElement!.className = `${styles.decoderWrapper} ${styles.active}`;
+    }
+
+    const onBlur = (event: React.FocusEvent) => {
+        console.log(event); 
+        event.currentTarget.parentElement!.className = styles.decoderWrapper;
+    }
+
     return (
-        <div className={styles.decoderItem}>
-            <label>
-                {props.originalLetter}<br />
-                <input type='text' value={letter} onKeyDown={onKeyDown} readOnly={props.locked} onChange={()=>{}} />
-            </label>
-        </div>
+        <label tabIndex={props.index} className={styles.decoderWrapper}>
+            <input type='text' value={letter} onKeyDown={onKeyDown} readOnly={props.locked} onChange={()=>{}} onFocus={onFocus} onBlur={onBlur} />
+            <div className={styles.decoderItem}>
+                {props.originalLetter}
+            </div>
+        </label>
     )
 }
 

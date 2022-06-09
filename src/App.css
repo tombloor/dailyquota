@@ -2,7 +2,7 @@
 body {
   color: #ddd;
   background-color: #303030;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: 'Roboto Mono', monospace;
 }
 
 .app {

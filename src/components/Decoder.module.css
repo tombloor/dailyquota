@@ -1,3 +1,47 @@
-.decoderItem input {
-    width: 12px;
+.decoderContainer {
+    font-size: 18px;
+    display: flex;
+    flex-direction: column;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.decoderWrapper {
+    width: 2.5em;
+    margin: .2em;
+}
+
+.decoderItem {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #3E7CB1;
+    border: 2px solid #222;
+    border-radius: 15%;
+    width: 100%;
+    height: 3em;
+}
+
+input {
+    color: #90E0EF;
+    background-color: transparent;
+    border: 0;
+    outline: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 18px;
+    caret-color: transparent;
+}
+
+input::selection {
+    background-color: transparent;
+}
+
+.decoderWrapper.active div {
+    background-color: #90E0EF;
+    color: #222;
 }

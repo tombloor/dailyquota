@@ -49,7 +49,8 @@ export default function Practice(props: any) {
             Right now this is just a demo of how the letter replacement will work. Try changing the letters to make
             the text match.
         </p>
-        <p>{data.quote}</p>
+        <p>Decoded quote: {data.quote}</p>
+        <p>Encoded quote: {data.encrypted}</p>
         <p>{decodedQuote}</p>
         <Decoder cipher={cipher} onChange={handleCipherChange} />
     </>
