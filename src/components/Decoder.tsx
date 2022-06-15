@@ -6,7 +6,8 @@ import styles from './Decoder.module.css';
 
 type DecoderProps = {
     cipher: string,
-    onChange: (newCipher:string) => void
+    onChange: (newCipher:string) => void,
+    onSubmit: () => void
 }
 
 export function Decoder(props: DecoderProps) {
@@ -55,6 +56,9 @@ export function Decoder(props: DecoderProps) {
                 {bottomRow.map((key, index) => {
                     return items[key];
                 })}
+            </div>
+            <div className={styles.row}>
+                <button onClick={props.onSubmit}>Check Solution</button>
             </div>
         </div>
     )

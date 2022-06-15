@@ -42,6 +42,14 @@ export default function Practice(props: any) {
         setDecodedQuote(applyCipher(data.encrypted, newCipher));
     }
 
+    const handleCheckSolution = () => {
+        if (decodedQuote == data.quote) {
+            alert('Success! 🎊');
+        } else {
+            alert('Not quite! 🙅');
+        }
+    }
+
     return (
     <>
         <h2>Practice Page</h2>
@@ -49,10 +57,10 @@ export default function Practice(props: any) {
             Right now this is just a demo of how the letter replacement will work. Try changing the letters to make
             the text match.
         </p>
-        <p>Decoded quote: {data.quote}</p>
-        <p>Encoded quote: {data.encrypted}</p>
+        {/* <p>Decoded quote: {data.quote}</p>
+        <p>Encoded quote: {data.encrypted}</p> */}
         <p>{decodedQuote}</p>
-        <Decoder cipher={cipher} onChange={handleCipherChange} />
+        <Decoder cipher={cipher} onChange={handleCipherChange} onSubmit={handleCheckSolution} />
     </>
     )
 }
