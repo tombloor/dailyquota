@@ -1,4 +1,3 @@
-import { EventBusyTwoTone } from '@mui/icons-material';
 import {useEffect, useState, useRef} from 'react';
 import styles from './TypeoverDecoder.module.css';
 
@@ -20,11 +19,11 @@ export function TypeoverDecoder({
 
     const [replacements, setReplacements] = useState(startingReplacements ?? {});
     const [newText, setNewText] = useState(<></>);
-
+ 
     useEffect(() => {
         runReplacements();
     }, [replacements]);
-
+    
     const runReplacements = () => {
         let key = 0;
         let elements: JSX.Element[] = [];
@@ -40,7 +39,6 @@ export function TypeoverDecoder({
 
                 if (currentClass === 'replaced')
                 {
-                    // TODO: respect casing
                     currentText += replacement;
                 }
                 else
@@ -133,22 +131,21 @@ export function TypeoverDecoder({
         }
     }
 
-    const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        if(event.code.startsWith('Arrow')) return;
+    let lastTextContent: string | null;
+    let lastCursorPosition: number | null;
+    const onKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        lastTextContent = null;
+        if(event.key.startsWith('Arrow')) return;
 
         event.preventDefault();
 
         let cursorPosition = getCursorPosition();
 
-        if (event.code.startsWith('Key')) {
-            onInput(cursorPosition, event.key);
-            moveCursor(cursorPosition + 1);
-        }
-        else if (event.code === 'Delete')
+        if (event.key === 'Delete')
         {
             onInput(cursorPosition, null);
         }
-        else if (event.code === 'Backspace')
+        else if (event.key === 'Backspace')
         {
             if (cursorPosition > 0)
             {
@@ -156,15 +153,52 @@ export function TypeoverDecoder({
             }
             moveCursor(cursorPosition - 1);
         }
-        else if (event.code === 'Space')
+        else if (event.key === ' ')
         {
             moveCursor(cursorPosition + 1);
+        }
+        else if (event.key.length === 1 && event.key.toUpperCase() !== event.key.toLowerCase()) {
+            onInput(cursorPosition, event.key);
+            moveCursor(cursorPosition + 1);
+        }
+    }
+    const onKeyDownLegacy = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        lastTextContent = textareaRef.current!.textContent;
+        lastCursorPosition = getCursorPosition();
+    }
+    const handleInput = (event: React.FormEvent<HTMLTextAreaElement>) => {
+        if (lastTextContent && lastCursorPosition) {
+            if (lastTextContent.length > event.currentTarget.value.length) {
+                onInput(lastCursorPosition, null);
+                moveCursor(lastCursorPosition - 1); // TODO: Fix this not working (maybe needs to be after keyup)
+            } else {
+                for(let i = 0; i < event.currentTarget.value.length; i++) {
+                    let newChar = event.currentTarget.value[i];
+                    let oldChar = lastTextContent[i];
+                    if (newChar.toLowerCase() != oldChar.toLowerCase()) {
+                        onInput(i, newChar);
+                        moveCursor(i + 1); // TODO: Fix this not working (maybe needs to be after keyup)
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if (!event.code) {
+            onKeyDownLegacy(event);
+        } else {
+            onKeyDown(event);
         }
     }
 
     return (
         <div className={styles.decoderContainer}>
-            <textarea ref={textareaRef} className={styles.decoderInput} spellCheck={false} onKeyDown={handleKeyDown} value={originalText}></textarea>
+            <textarea 
+                ref={textareaRef} className={styles.decoderInput} value={originalText}
+                onKeyDown={handleKeyDown} onInput={handleInput} onChange={() => {}}
+                autoCapitalize="off" autoComplete="off" spellCheck="false" autoCorrect="off"></textarea>
             <pre className={styles.decoderOutput}>{newText}</pre>
         </div>
     )
