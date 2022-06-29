@@ -23,6 +23,17 @@ export function TypeoverDecoder({
     useEffect(() => {
         runReplacements();
     }, [replacements]);
+
+    useEffect(() => {
+        if (textareaRef.current!.hasAttribute('cursorposition')) {
+            setTimeout(() => {
+                // Android needs this otherwise the cursor doesn't move
+                // If you type too fast it still messes up, so will need to revisit that 
+                let pos = parseInt(textareaRef.current!.getAttribute('cursorposition')!);
+                moveCursor(pos);
+            }, 0);
+        }
+    });
     
     const runReplacements = () => {
         let key = 0;
@@ -119,7 +130,7 @@ export function TypeoverDecoder({
         {
             let toReplace = originalText[position].toLowerCase();
             let r = {...replacements};
-            if (character) 
+            if (character && character.toLowerCase() != character.toUpperCase()) 
             {
                 r[toReplace] = character;
             }
@@ -135,6 +146,8 @@ export function TypeoverDecoder({
     let lastCursorPosition: number | null;
     const onKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
         lastTextContent = null;
+        lastCursorPosition = null;
+
         if(event.key.startsWith('Arrow')) return;
 
         event.preventDefault();
@@ -167,19 +180,27 @@ export function TypeoverDecoder({
         lastCursorPosition = getCursorPosition();
     }
     const handleInput = (event: React.FormEvent<HTMLTextAreaElement>) => {
-        if (lastTextContent && lastCursorPosition) {
+        if (lastTextContent && lastCursorPosition !== null) {
             if (lastTextContent.length > event.currentTarget.value.length) {
-                onInput(lastCursorPosition, null);
-                moveCursor(lastCursorPosition - 1); // TODO: Fix this not working (maybe needs to be after keyup)
+                // This is a backspace
+                let difference = lastTextContent.length - event.currentTarget.value.length;
+                onInput(lastCursorPosition - difference, null);
+                textareaRef.current!.setAttribute('cursorposition', (lastCursorPosition - difference).toString());
             } else {
+                let updated = false;
+                // This is an input
                 for(let i = 0; i < event.currentTarget.value.length; i++) {
                     let newChar = event.currentTarget.value[i];
                     let oldChar = lastTextContent[i];
-                    if (newChar.toLowerCase() != oldChar.toLowerCase()) {
+                    if (newChar.toLowerCase() != oldChar.toLowerCase() && oldChar.toLowerCase() != oldChar.toUpperCase()) {
                         onInput(i, newChar);
-                        moveCursor(i + 1); // TODO: Fix this not working (maybe needs to be after keyup)
+                        updated = true;
                         break;
                     }
+                }
+                textareaRef.current!.setAttribute('cursorposition', (lastCursorPosition + 1).toString());
+                if (!updated) {
+                    setReplacements(replacements); // Force a state update otherwise the cursor goes nuts
                 }
             }
         }
