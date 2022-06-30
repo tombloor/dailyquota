@@ -94,7 +94,7 @@ export function TypeoverDecoder({
     }
 
     const getCursorPosition = () => {
-        return textareaRef.current!.selectionStart;
+        return textareaRef.current!.selectionEnd;
     }
 
     const moveCursor = (position: number) => {
@@ -183,9 +183,21 @@ export function TypeoverDecoder({
         if (lastTextContent && lastCursorPosition !== null) {
             if (lastTextContent.length > event.currentTarget.value.length) {
                 // This is a backspace
-                let difference = lastTextContent.length - event.currentTarget.value.length;
-                onInput(lastCursorPosition - difference, null);
-                textareaRef.current!.setAttribute('cursorposition', (lastCursorPosition - difference).toString());
+                let updated = false;
+                // This is an input
+                for(let i = 0; i < event.currentTarget.value.length; i++) {
+                    let newChar = event.currentTarget.value[i];
+                    let oldChar = lastTextContent[i];
+                    if (newChar.toLowerCase() != oldChar.toLowerCase() && oldChar.toLowerCase() != oldChar.toUpperCase()) {
+                        onInput(i, null);
+                        updated = true;
+                        break;
+                    }
+                }
+                textareaRef.current!.setAttribute('cursorposition', (lastCursorPosition - 1).toString());
+                if (!updated) {
+                    setReplacements(replacements); // Force a state update otherwise the cursor goes nuts
+                }
             } else {
                 let updated = false;
                 // This is an input
