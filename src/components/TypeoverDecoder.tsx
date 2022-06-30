@@ -181,39 +181,29 @@ export function TypeoverDecoder({
     }
     const handleInput = (event: React.FormEvent<HTMLTextAreaElement>) => {
         if (lastTextContent && lastCursorPosition !== null) {
+            let newCursorPosition = lastCursorPosition;
+            let updated = false;
+
             if (lastTextContent.length > event.currentTarget.value.length) {
                 // This is a backspace
-                let updated = false;
-                // This is an input
-                for(let i = 0; i < event.currentTarget.value.length; i++) {
-                    let newChar = event.currentTarget.value[i];
-                    let oldChar = lastTextContent[i];
-                    if (newChar.toLowerCase() != oldChar.toLowerCase() && oldChar.toLowerCase() != oldChar.toUpperCase()) {
-                        onInput(i, null);
-                        updated = true;
-                        break;
-                    }
-                }
-                textareaRef.current!.setAttribute('cursorposition', (lastCursorPosition - 1).toString());
-                if (!updated) {
-                    setReplacements(replacements); // Force a state update otherwise the cursor goes nuts
-                }
+                newCursorPosition -= 1;
             } else {
-                let updated = false;
                 // This is an input
-                for(let i = 0; i < event.currentTarget.value.length; i++) {
-                    let newChar = event.currentTarget.value[i];
-                    let oldChar = lastTextContent[i];
-                    if (newChar.toLowerCase() != oldChar.toLowerCase() && oldChar.toLowerCase() != oldChar.toUpperCase()) {
-                        onInput(i, newChar);
-                        updated = true;
-                        break;
-                    }
+                newCursorPosition += 1;
+            }
+
+            for(let i = 0; i < event.currentTarget.value.length; i++) {
+                let newChar = event.currentTarget.value[i];
+                let oldChar = lastTextContent[i];
+                if (newChar.toLowerCase() != oldChar.toLowerCase() && oldChar.toLowerCase() != oldChar.toUpperCase()) {
+                    onInput(i, newCursorPosition > lastCursorPosition ? newChar : null);
+                    updated = true;
+                    break;
                 }
-                textareaRef.current!.setAttribute('cursorposition', (lastCursorPosition + 1).toString());
-                if (!updated) {
-                    setReplacements(replacements); // Force a state update otherwise the cursor goes nuts
-                }
+            }
+            textareaRef.current!.setAttribute('cursorposition', newCursorPosition.toString());
+            if (!updated) {
+                setReplacements(replacements); // Force a state update otherwise the cursor goes nuts
             }
         }
     }
