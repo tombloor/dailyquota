@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Decoder } from "../components/Decoder";
+import { TypeoverDecoder } from '../components/TypeoverDecoder';
 
 const data = {
     'quote': 'Welcome to the Daily Quota demo!',
@@ -42,6 +42,14 @@ export default function Practice(props: any) {
         setDecodedQuote(applyCipher(data.encrypted, newCipher));
     }
 
+    const handleCheckSolution = () => {
+        if (decodedQuote == data.quote) {
+            alert('Success! 🎊');
+        } else {
+            alert('Not quite! 🙅');
+        }
+    }
+
     return (
     <>
         <h2>Practice Page</h2>
@@ -49,9 +57,10 @@ export default function Practice(props: any) {
             Right now this is just a demo of how the letter replacement will work. Try changing the letters to make
             the text match.
         </p>
-        <p>{data.quote}</p>
-        <p>{decodedQuote}</p>
-        <Decoder cipher={cipher} onChange={handleCipherChange} />
+
+        <TypeoverDecoder originalText={data.encrypted} onChange={(newText: string) => { setDecodedQuote(newText) }} />
+
+        <button onClick={handleCheckSolution} style={{marginTop: '20px'}}>Check solution</button>
     </>
     )
 }
