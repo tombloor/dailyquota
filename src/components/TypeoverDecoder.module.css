@@ -29,6 +29,7 @@
     top: 0;
     left: 0;
     pointer-events: none;
+    white-space: pre-wrap; /* Fix for wrapping text on small screens */
 }
 
 .decoderOutput .replaced {
