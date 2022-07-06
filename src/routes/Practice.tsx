@@ -35,14 +35,9 @@ data.encrypted = applyCipher(data.quote, demoCipher);
 export default function Practice(props: any) {
 
     const [decodedQuote, setDecodedQuote] = useState(data.encrypted);
-    const [cipher, setCipher] = useState(data.cipher);
-
-    const handleCipherChange = (newCipher: string) => {
-        setCipher(newCipher);
-        setDecodedQuote(applyCipher(data.encrypted, newCipher));
-    }
 
     const handleCheckSolution = () => {
+        alert(decodedQuote)
         if (decodedQuote == data.quote) {
             alert('Success! 🎊');
         } else {
@@ -58,7 +53,7 @@ export default function Practice(props: any) {
             the text match.
         </p>
 
-        <TypeoverDecoder originalText={data.encrypted} onChange={(newText: string) => { setDecodedQuote(newText) }} />
+        <TypeoverDecoder originalText={data.encrypted} onChange={(newText: string) => { setDecodedQuote(newText); }} />
 
         <button onClick={handleCheckSolution} style={{marginTop: '20px'}}>Check solution</button>
     </>

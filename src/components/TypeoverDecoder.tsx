@@ -18,7 +18,8 @@ export function TypeoverDecoder({
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     const [replacements, setReplacements] = useState(startingReplacements ?? {});
-    const [newText, setNewText] = useState(<></>);
+    const [elements, setElements] = useState(<></>);
+    const [newText, setNewText] = useState("");
  
     useEffect(() => {
         runReplacements();
@@ -39,6 +40,7 @@ export function TypeoverDecoder({
         let key = 0;
         let elements: JSX.Element[] = [];
         let currentClass = '';
+        let newText = '';
         let currentText = '';
 
         originalText.split('').forEach(character => {
@@ -60,6 +62,7 @@ export function TypeoverDecoder({
                     currentText = replacement;
                     key++;
                 }
+                newText += replacement;
             }
             else
             {
@@ -75,6 +78,7 @@ export function TypeoverDecoder({
                 {
                     currentText += character;
                 }
+                newText += character;
             }
         });
 
@@ -90,7 +94,8 @@ export function TypeoverDecoder({
             }
         }
 
-        setNewText(<>{elements.map((e) => e)}</>);
+        setElements(<>{elements.map((e) => e)}</>);
+        setNewText(newText);
     }
 
     const getCursorPosition = () => {
@@ -205,6 +210,7 @@ export function TypeoverDecoder({
             if (!updated) {
                 setReplacements(replacements); // Force a state update otherwise the cursor goes nuts
             }
+            onChange(newText);
         }
     }
 
@@ -213,6 +219,7 @@ export function TypeoverDecoder({
             onKeyDownLegacy(event);
         } else {
             onKeyDown(event);
+            onChange(newText);
         }
     }
 
@@ -222,7 +229,7 @@ export function TypeoverDecoder({
                 ref={textareaRef} className={styles.decoderInput} value={originalText}
                 onKeyDown={handleKeyDown} onInput={handleInput} onChange={() => {}}
                 autoCapitalize="off" autoComplete="off" spellCheck="false" autoCorrect="off"></textarea>
-            <pre className={styles.decoderOutput}>{newText}</pre>
+            <pre className={styles.decoderOutput}>{elements}</pre>
         </div>
     )
 }
