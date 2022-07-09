@@ -18,11 +18,12 @@ export function TypeoverDecoder({
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     const [replacements, setReplacements] = useState(startingReplacements ?? {});
-    const [elements, setElements] = useState(<></>);
-    const [newText, setNewText] = useState("");
+    const [elements, setElements] = useState<JSX.Element[]>([]);
  
     useEffect(() => {
-        runReplacements();
+        let text = runReplacements(replacements);
+        setElements(getElements(text));
+        onChange(text);
     }, [replacements]);
 
     useEffect(() => {
@@ -35,67 +36,57 @@ export function TypeoverDecoder({
             }, 0);
         }
     });
-    
-    const runReplacements = () => {
-        let key = 0;
-        let elements: JSX.Element[] = [];
-        let currentClass = '';
-        let newText = '';
-        let currentText = '';
 
-        originalText.split('').forEach(character => {
-            if(character.toLowerCase() in replacements)
-            {
-                let replacement = replacements[character.toLowerCase()];
-                if (character === character.toUpperCase())
-                    replacement = replacement.toUpperCase();
-
-                if (currentClass === 'replaced')
-                {
-                    currentText += replacement;
+    const runReplacements = (r: ReplacementMap): string => {
+        let replacedText = "";
+        originalText.split('').forEach(char => {
+            if(char.toLowerCase() in r) {
+                let replacement = r[char.toLowerCase()];
+                if(char === char.toUpperCase()) {
+                    replacedText += replacement.toUpperCase();
+                } else {
+                    replacedText += replacement.toLowerCase();
                 }
-                else
-                {
-                    if (currentText.length > 0)
-                        elements.push(<span key={key}>{currentText}</span>);
-                    currentClass = 'replaced';
-                    currentText = replacement;
-                    key++;
-                }
-                newText += replacement;
-            }
-            else
-            {
-                if (currentClass === 'replaced')
-                {
-                    if (currentText.length > 0)
-                        elements.push(<span key={key} className={styles.replaced}>{currentText}</span>);
-                    currentClass = '';
-                    currentText = character;
-                    key++;
-                }
-                else
-                {
-                    currentText += character;
-                }
-                newText += character;
+            } else {
+                replacedText += char;
             }
         });
 
-        if (currentText.length > 0)
-        {
-            if (currentClass === 'replaced')
-            {
-                elements.push(<span key={key} className={styles.replaced}>{currentText}</span>);
-            }
-            else
-            {
-                elements.push(<span key={key}>{currentText}</span>);
+        return replacedText;
+    }
+
+    const getElements = (t: string): JSX.Element[] => {
+        let arr = [];
+        let currentText = "";
+        let currentClass = "";
+
+        for(let i = 0; i < t.length; i++) {
+            if(t[i] == originalText[i]) {
+                if(currentClass == "") {
+                    currentText += t[i];
+                } else {
+                    if(currentText.length > 0)
+                        arr.push(<span className={currentClass}>{currentText}</span>);
+                    currentText = t[i];
+                    currentClass = "";
+                }
+            } else {
+                if (currentClass == styles.replaced) {
+                    currentText += t[i];
+                } else {
+                    if(currentText.length > 0)
+                        arr.push(<span className={currentClass}>{currentText}</span>);
+                    currentText = t[i];
+                    currentClass = styles.replaced;
+                }
             }
         }
 
-        setElements(<>{elements.map((e) => e)}</>);
-        setNewText(newText);
+        if(currentText) {
+            arr.push(<span className={currentClass}>{currentText}</span>);
+        }
+
+        return arr;
     }
 
     const getCursorPosition = () => {
@@ -210,7 +201,6 @@ export function TypeoverDecoder({
             if (!updated) {
                 setReplacements(replacements); // Force a state update otherwise the cursor goes nuts
             }
-            onChange(newText);
         }
     }
 
@@ -219,7 +209,6 @@ export function TypeoverDecoder({
             onKeyDownLegacy(event);
         } else {
             onKeyDown(event);
-            onChange(newText);
         }
     }
 
@@ -227,7 +216,7 @@ export function TypeoverDecoder({
         <div className={styles.decoderContainer}>
             <textarea 
                 ref={textareaRef} className={styles.decoderInput} value={originalText}
-                onKeyDown={handleKeyDown} onInput={handleInput} onChange={() => {}}
+                onKeyDown={handleKeyDown} onInput={handleInput} onChange={() => { }}
                 autoCapitalize="off" autoComplete="off" spellCheck="false" autoCorrect="off"></textarea>
             <pre className={styles.decoderOutput}>{elements}</pre>
         </div>

@@ -37,7 +37,6 @@ export default function Practice(props: any) {
     const [decodedQuote, setDecodedQuote] = useState(data.encrypted);
 
     const handleCheckSolution = () => {
-        alert(decodedQuote)
         if (decodedQuote == data.quote) {
             alert('Success! 🎊');
         } else {
