@@ -59,14 +59,17 @@ export function TypeoverDecoder({
         let arr = [];
         let currentText = "";
         let currentClass = "";
+        let key = 0;
 
         for(let i = 0; i < t.length; i++) {
             if(t[i] == originalText[i]) {
                 if(currentClass == "") {
                     currentText += t[i];
                 } else {
-                    if(currentText.length > 0)
-                        arr.push(<span className={currentClass}>{currentText}</span>);
+                    if(currentText.length > 0) {
+                        arr.push(<span key={key} className={currentClass}>{currentText}</span>);
+                        key++;
+                    }
                     currentText = t[i];
                     currentClass = "";
                 }
@@ -74,8 +77,10 @@ export function TypeoverDecoder({
                 if (currentClass == styles.replaced) {
                     currentText += t[i];
                 } else {
-                    if(currentText.length > 0)
-                        arr.push(<span className={currentClass}>{currentText}</span>);
+                    if(currentText.length > 0) {
+                        arr.push(<span key={key} className={currentClass}>{currentText}</span>);
+                        key++;
+                    }
                     currentText = t[i];
                     currentClass = styles.replaced;
                 }
@@ -83,7 +88,7 @@ export function TypeoverDecoder({
         }
 
         if(currentText) {
-            arr.push(<span className={currentClass}>{currentText}</span>);
+            arr.push(<span key={key} className={currentClass}>{currentText}</span>);
         }
 
         return arr;
