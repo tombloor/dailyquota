@@ -6,7 +6,7 @@ export interface quoteInterface {
     reference: string,
     text: string,
     author: string,
-    year: number,
+    bio: string,
     moreInfoUrl: string
 }
 
