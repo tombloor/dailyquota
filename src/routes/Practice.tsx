@@ -1,11 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TypeoverDecoder } from '../components/TypeoverDecoder';
 
-const data = {
-    'quote': 'Welcome to the Daily Quota demo!',
-    'cipher': 'abcdefghijklmnopqrstuvwxyz' // Users attempt (will be state eventually)
-    , 'encrypted': ''
-}
+import { getRandomQuote } from '../api/quoteAPI';
+
 
 const applyCipher = (text: string, cipher: string) => {
     let tmp = '';
@@ -27,17 +24,32 @@ const applyCipher = (text: string, cipher: string) => {
     return tmp;
 }
 
-// This is just for the demo
-const demoCipher = data.cipher.split('').sort(() => { return 0.5 - Math.random() }).join('');
-data.encrypted = applyCipher(data.quote, demoCipher);
-//
-
 export default function Practice(props: any) {
 
-    const [decodedQuote, setDecodedQuote] = useState(data.encrypted);
+    const [decodedQuote, setDecodedQuote] = useState('');
+    const [challenge, setChallenge] = useState({
+        quote: '',
+        author: '',
+        year: 0,
+        encrypted: '',
+        isLoading: true
+    });
+
+    useEffect(() => {
+        const demoCipher = 'abcdefghijklmnopqrstuvwxyz'.split('').sort(() => { return 0.5 - Math.random() }).join('');
+        getRandomQuote().then((q) => {
+            setChallenge({
+                quote: q.text,
+                author: q.author,
+                year: q.year,
+                encrypted: applyCipher(q.text, demoCipher),
+                isLoading: false
+            });
+        });
+    }, [])
 
     const handleCheckSolution = () => {
-        if (decodedQuote == data.quote) {
+        if (decodedQuote == challenge.quote) {
             alert('Success! 🎊');
         } else {
             alert('Not quite! 🙅');
@@ -52,9 +64,14 @@ export default function Practice(props: any) {
             the text match.
         </p>
 
-        <TypeoverDecoder originalText={data.encrypted} onChange={(newText: string) => { setDecodedQuote(newText); }} />
-
-        <button onClick={handleCheckSolution} style={{marginTop: '20px'}}>Check solution</button>
+        {challenge.isLoading ? 
+            <p>Loading...</p> : 
+            <>
+                <TypeoverDecoder originalText={challenge.encrypted} onChange={(newText: string) => { setDecodedQuote(newText); }} />
+                <i>{challenge.author} { challenge.year ? <> - {challenge.year}</> : <></>}</i>
+                <button onClick={handleCheckSolution} style={{marginTop: '20px'}}>Check solution</button>
+            </>
+        }
     </>
     )
 }
