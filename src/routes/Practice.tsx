@@ -30,7 +30,6 @@ export default function Practice(props: any) {
     const [challenge, setChallenge] = useState({
         quote: '',
         author: '',
-        year: 0,
         encrypted: '',
         isLoading: true
     });
@@ -41,7 +40,6 @@ export default function Practice(props: any) {
             setChallenge({
                 quote: q.text,
                 author: q.author,
-                year: q.year,
                 encrypted: applyCipher(q.text, demoCipher),
                 isLoading: false
             });
@@ -68,7 +66,7 @@ export default function Practice(props: any) {
             <p>Loading...</p> : 
             <>
                 <TypeoverDecoder originalText={challenge.encrypted} onChange={(newText: string) => { setDecodedQuote(newText); }} />
-                <i>{challenge.author} { challenge.year ? <> - {challenge.year}</> : <></>}</i>
+                <i>{challenge.author}</i>
                 <button onClick={handleCheckSolution} style={{marginTop: '20px'}}>Check solution</button>
             </>
         }
