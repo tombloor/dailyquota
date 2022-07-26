@@ -1,1 +1,1 @@
-export * from './challenge';
+export * from './challengeFunctions';
