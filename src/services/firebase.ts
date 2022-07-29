@@ -1,5 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
+import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
+
 
 const firebaseConfig = {
     apiKey: "AIzaSyDsv0YlsAvltMk9nNyMJ2wJ_urwWzEgUwY",
@@ -13,3 +15,5 @@ const firebaseConfig = {
 
 export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
+export const functions = getFunctions(app);
+connectFunctionsEmulator(functions, "localhost", 5001);

@@ -6,5 +6,6 @@ export interface Challenge {
     cipher: string,
     original: string,
     encoded: string,
+    author: string,
     created_on: Date
 }

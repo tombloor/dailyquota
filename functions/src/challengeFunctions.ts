@@ -30,10 +30,10 @@ const applyCipher = (text: string, cipher:string) => {
     return tmp;
 }
 
-export const newChallenge = functions.https.onRequest(async (req, res) => {
+export const requestChallenge = functions.https.onCall(async (params, context) => {
     let quote = await getRandomQuote();
     if (quote) {
-        data.createQuote(quote);
+        data.saveQuote(quote);
 
         let cipher = generateRandomCipher();
         let encoded = applyCipher(quote.text, cipher);
@@ -42,9 +42,11 @@ export const newChallenge = functions.https.onRequest(async (req, res) => {
 
         functions.logger.info(newChallenge);
 
-        res.status(200).json({
+        return {
             challenge_id: newChallenge.id,
-            encoded: newChallenge.encoded
-        });
-    }    
+            encoded: newChallenge.encoded,
+            author: quote.author?.name
+        }
+    } 
+    return {};
 });
