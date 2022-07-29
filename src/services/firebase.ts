@@ -16,4 +16,8 @@ const firebaseConfig = {
 export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const functions = getFunctions(app);
-connectFunctionsEmulator(functions, "localhost", 5001);
+
+// We are running in the firebase emulator environment
+if (location.hostname === "localhost" && location.port === "5000") {
+    connectFunctionsEmulator(functions, "localhost", 5001);
+}
