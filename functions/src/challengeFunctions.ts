@@ -33,12 +33,12 @@ const applyCipher = (text: string, cipher:string) => {
 export const requestChallenge = functions.https.onCall(async (params, context) => {
     let quote = await getRandomQuote();
     if (quote) {
-        data.saveQuote(quote);
+        await data.saveQuote(quote);
 
         let cipher = generateRandomCipher();
         let encoded = applyCipher(quote.text, cipher);
 
-        let newChallenge: Challenge = data.createChallenge(quote, cipher, encoded);
+        let newChallenge: Challenge = await data.createChallenge(quote, cipher, encoded);
 
         functions.logger.info(newChallenge);
 
