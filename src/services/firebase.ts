@@ -1,5 +1,7 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+//import { getFirestore } from 'firebase/firestore';
+import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
+
 
 const firebaseConfig = {
     apiKey: "AIzaSyDsv0YlsAvltMk9nNyMJ2wJ_urwWzEgUwY",
@@ -12,4 +14,10 @@ const firebaseConfig = {
 };
 
 export const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app);
+//export const db = getFirestore(app);
+export const functions = getFunctions(app);
+
+// We are running in the firebase emulator environment
+if (window.location.hostname === "localhost" && window.location.port === "5000") {
+    connectFunctionsEmulator(functions, "localhost", 5001);
+}

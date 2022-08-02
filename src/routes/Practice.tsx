@@ -1,59 +1,37 @@
 import { useState, useEffect } from "react";
 import { TypeoverDecoder } from '../components/TypeoverDecoder';
 
-import { getRandomQuote } from '../api/quoteAPI';
+import { createChallenge } from '../api/challengeAPI';
 
-
-const applyCipher = (text: string, cipher: string) => {
-    let tmp = '';
-
-    text.split('').forEach((char, index) => {
-        if (char.toLowerCase() != char.toUpperCase()) {
-            // This is an alpha character
-            let cipherIndex = char.toLowerCase().charCodeAt(0) - 'a'.charCodeAt(0);
-            if (char.toLowerCase() == char) {
-                tmp += cipher[cipherIndex];
-            } else {
-                tmp += cipher[cipherIndex].toUpperCase();
-            }
-        } else {
-            tmp += char;
-        }
-    });
-
-    return tmp;
-}
 
 export default function Practice(props: any) {
 
     const [decodedQuote, setDecodedQuote] = useState('');
-    const [challenge, setChallenge] = useState({
-        quote: '',
-        author: '',
-        year: 0,
-        encrypted: '',
-        isLoading: true
-    });
+    const [challenge, setChallenge] = useState<{
+        challenge_id: string,
+        author: string,
+        encoded: string
+    }>();
 
     useEffect(() => {
         const demoCipher = 'abcdefghijklmnopqrstuvwxyz'.split('').sort(() => { return 0.5 - Math.random() }).join('');
-        getRandomQuote().then((q) => {
-            setChallenge({
-                quote: q.text,
-                author: q.author,
-                year: q.year,
-                encrypted: applyCipher(q.text, demoCipher),
-                isLoading: false
-            });
-        });
+        // Check if challenge saved in storage
+            // If yes, set state so the user can pick up where they left off
+            // If no, request a new challenge
     }, [])
 
     const handleCheckSolution = () => {
-        if (decodedQuote == challenge.quote) {
-            alert('Success! 🎊');
-        } else {
-            alert('Not quite! 🙅');
-        }
+        alert('Call the check function with challenge_id and decoded string');
+    }
+
+    const startNewChallenge = async () => {
+        let { challenge_id, encoded, author } = (await createChallenge()).data;
+
+        setChallenge({
+            challenge_id,
+            encoded,
+            author
+        });
     }
 
     return (
@@ -64,14 +42,14 @@ export default function Practice(props: any) {
             the text match.
         </p>
 
-        {challenge.isLoading ? 
-            <p>Loading...</p> : 
+        { !challenge ?
+            <button onClick={startNewChallenge}>Start a new challenge</button> :
             <>
-                <TypeoverDecoder originalText={challenge.encrypted} onChange={(newText: string) => { setDecodedQuote(newText); }} />
-                <i>{challenge.author} { challenge.year ? <> - {challenge.year}</> : <></>}</i>
+                <TypeoverDecoder originalText={challenge.encoded} onChange={(newText: string) => { setDecodedQuote(newText); }} />
+                <i>{challenge.author}</i>
                 <button onClick={handleCheckSolution} style={{marginTop: '20px'}}>Check solution</button>
             </>
-        }
+        }       
     </>
     )
 }
