@@ -18,6 +18,6 @@ export const app = initializeApp(firebaseConfig);
 export const functions = getFunctions(app);
 
 // We are running in the firebase emulator environment
-if (location.hostname === "localhost" && location.port === "5000") {
+if (window.location.hostname === "localhost" && window.location.port === "5000") {
     connectFunctionsEmulator(functions, "localhost", 5001);
 }

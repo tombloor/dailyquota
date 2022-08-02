@@ -1,2 +1,2 @@
-export { app, db } from './firebase';
+export { app, functions } from './firebase';
 
