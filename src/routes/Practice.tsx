@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { TypeoverDecoder } from '../components/TypeoverDecoder';
 
-import { createChallenge } from '../api/challengeAPI';
+import { createChallenge, checkSolution } from '../api/challengeAPI';
 
 
 export default function Practice(props: any) {
@@ -21,7 +21,16 @@ export default function Practice(props: any) {
     }, [])
 
     const handleCheckSolution = () => {
-        alert('Call the check function with challenge_id and decoded string');
+        if (challenge) {
+            let request = {
+                challenge_id: challenge.challenge_id, 
+                decoded_text: decodedQuote
+            };
+            checkSolution(request).then((response: any) => {
+                console.dir(response.data);
+                alert(response.data.correct);
+            });
+        }
     }
 
     const startNewChallenge = async () => {
