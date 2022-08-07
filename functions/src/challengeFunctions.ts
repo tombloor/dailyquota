@@ -50,3 +50,35 @@ export const requestChallenge = functions.https.onCall(async (params, context) =
     } 
     return {};
 });
+
+interface checkSolutionArgs {
+    challenge_id: string,
+    decoded_text: string
+}
+
+export const checkSolution = functions.https.onCall(async (params: checkSolutionArgs, context) => {
+    let { challenge_id, decoded_text } = params;
+
+    let c = await data.getChallenge(challenge_id);
+
+    console.log(decoded_text);
+    console.dir(c);
+
+    if (c && c.original == decoded_text) {
+        let q = await data.getQuote(c.quote_id);
+        console.dir(q);
+        if (q) {
+            return {
+                correct: true,
+                quote: {
+                    text: q.text,
+                    author: q.author
+                }
+            }
+        }
+    }
+
+    return {
+        correct: false
+    }
+});
