@@ -6,7 +6,7 @@ import * as data from './services/data'
 const generateRandomCipher = (min_hints?: number, max_hints?: number) => {
     //TODO: Implement hints, will be represented by capital letters in the cipher
     // These will be automatically filled in and locked for the user to make it easier
-    let cipher = 'abcdefghijklmnopqrstuvwxyz'.split('').sort(() => { return 0.5 - Math.random() }).join('');
+    const cipher = 'abcdefghijklmnopqrstuvwxyz'.split('').sort(() => { return 0.5 - Math.random() }).join('');
     return cipher;
 }
 
@@ -16,7 +16,7 @@ const applyCipher = (text: string, cipher:string) => {
     text.split('').forEach((char, index) => {
         if (char.toLowerCase() != char.toUpperCase()) {
             // This is an alpha character
-            let cipherIndex = char.toLowerCase().charCodeAt(0) - 'a'.charCodeAt(0);
+            const cipherIndex = char.toLowerCase().charCodeAt(0) - 'a'.charCodeAt(0);
             if (char.toLowerCase() == char) {
                 tmp += cipher[cipherIndex];
             } else {
@@ -31,14 +31,14 @@ const applyCipher = (text: string, cipher:string) => {
 }
 
 export const requestChallenge = functions.https.onCall(async (params, context) => {
-    let quote = await getRandomQuote();
+    const quote = await getRandomQuote();
     if (quote) {
         await data.saveQuote(quote);
 
-        let cipher = generateRandomCipher();
-        let encoded = applyCipher(quote.text, cipher);
+        const cipher = generateRandomCipher();
+        const encoded = applyCipher(quote.text, cipher);
 
-        let newChallenge: Challenge = await data.createChallenge(quote, cipher, encoded);
+        const newChallenge: Challenge = await data.createChallenge(quote, cipher, encoded);
 
         functions.logger.info(newChallenge);
 
@@ -57,15 +57,15 @@ interface checkSolutionArgs {
 }
 
 export const checkSolution = functions.https.onCall(async (params: checkSolutionArgs, context) => {
-    let { challenge_id, decoded_text } = params;
+    const { challenge_id, decoded_text } = params;
 
-    let c = await data.getChallenge(challenge_id);
+    const c = await data.getChallenge(challenge_id);
 
     console.log(decoded_text);
     console.dir(c);
 
     if (c && c.original == decoded_text) {
-        let q = await data.getQuote(c.quote_id);
+        const q = await data.getQuote(c.quote_id);
         console.dir(q);
         if (q) {
             return {
