@@ -6,7 +6,7 @@ import { createHash } from 'crypto';
 
 export const getQuoteId = (author: string, text: string): string => {
     let author_text = author.toLowerCase().trim() + '::' + text.toLowerCase().trim();
-    let hash = createHash('md5').update(author_text).digest('base64');
+    let hash = createHash('md5').update(author_text).digest('base64url');
     return hash;
 }
 
