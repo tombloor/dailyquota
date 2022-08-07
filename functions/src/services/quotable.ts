@@ -5,14 +5,14 @@ import { createHash } from 'crypto';
 
 
 export const getQuoteId = (author: string, text: string): string => {
-    let author_text = author.toLowerCase().trim() + '::' + text.toLowerCase().trim();
-    let hash = createHash('md5').update(author_text).digest('base64url');
+    const author_text = author.toLowerCase().trim() + '::' + text.toLowerCase().trim();
+    const hash = createHash('md5').update(author_text).digest('base64url');
     return hash;
 }
 
 export const getAuthor = (slug: string): Promise<Author | null> => {
     console.log('slug is : ' + slug);
-    let url = 'https://api.quotable.io/authors?slug=' + slug;
+    const url = 'https://api.quotable.io/authors?slug=' + slug;
 
     return axios.get(url)
         .then((response) => {
@@ -33,14 +33,14 @@ export const getAuthor = (slug: string): Promise<Author | null> => {
 }
 
 export const getRandomQuote = (): Promise<Quote | null> => {
-    let url = 'https://api.quotable.io/random?maxLength=50';
+    const url = 'https://api.quotable.io/random?maxLength=50';
     return axios.get(url)
         .then((response) => {
             return response.data;
         })
         .then(async (data) => {
-            let author = await getAuthor(data.authorSlug);
-            let quote: Quote = {
+            const author = await getAuthor(data.authorSlug);
+            const quote: Quote = {
                 id: getQuoteId(data.content, author?.name ?? ""),
                 text: data.content,
                 author: author

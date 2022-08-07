@@ -1,1 +1,1 @@
-export * from './challengeFunctions';
+export { requestChallenge, checkSolution } from './challengeFunctions'

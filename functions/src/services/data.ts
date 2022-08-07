@@ -4,8 +4,8 @@ import { Challenge, Quote } from '../models'
 // Checkout the docs on firestore converters for a nice way to map interfaces 
 
 export const getQuote = async (id: string): Promise<Quote | null> => {
-    let quoteDoc = await db.doc('quotes/' + id).get();
-    let q = quoteDoc.data();
+    const quoteDoc = await db.doc('quotes/' + id).get();
+    const q = quoteDoc.data();
 
     if (q) {
         return {
@@ -19,7 +19,7 @@ export const getQuote = async (id: string): Promise<Quote | null> => {
 }
 
 export const saveQuote = async (quote: Quote): Promise<Quote> => {
-    let quoteDoc = {...quote};
+    const quoteDoc = {...quote};
     await db.collection('quotes').doc(quoteDoc.id).set({
         text: quoteDoc.text,
         author: quoteDoc.author
@@ -29,8 +29,8 @@ export const saveQuote = async (quote: Quote): Promise<Quote> => {
 };
 
 export const getChallenge = async (id: string): Promise<Challenge | null> => {
-    let challengeDoc = await db.doc('challenges/' + id).get();
-    let c = challengeDoc.data();
+    const challengeDoc = await db.doc('challenges/' + id).get();
+    const c = challengeDoc.data();
 
     if (c) {
         return {
@@ -48,8 +48,8 @@ export const getChallenge = async (id: string): Promise<Challenge | null> => {
 }
 
 export const createChallenge = async (quote: Quote, cipher: string, encoded: string): Promise<Challenge> => {
-    let challengeCollection = db.collection('challenges');
-    let challengeDoc: Challenge = {
+    const challengeCollection = db.collection('challenges');
+    const challengeDoc: Challenge = {
         quote_id: quote.id,
         cipher,
         original: quote.text,
@@ -58,7 +58,7 @@ export const createChallenge = async (quote: Quote, cipher: string, encoded: str
         created_on: new Date()
     };
 
-    let result = await challengeCollection.add(challengeDoc);
+    const result = await challengeCollection.add(challengeDoc);
     challengeDoc.id = result.id;
 
     return challengeDoc;
