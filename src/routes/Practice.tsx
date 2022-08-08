@@ -1,53 +1,98 @@
-import { useState } from "react";
-import { TypeoverDecoder } from '../components/TypeoverDecoder';
+import { useState, useEffect } from "react";
+import { ReplacementMap, TypeoverDecoder } from '../components/TypeoverDecoder';
 
-const data = {
-    'quote': 'Welcome to the Daily Quota demo!',
-    'cipher': 'abcdefghijklmnopqrstuvwxyz' // Users attempt (will be state eventually)
-    , 'encrypted': ''
-}
+import { createChallenge, checkSolution } from '../api/challengeAPI';
 
-const applyCipher = (text: string, cipher: string) => {
-    let tmp = '';
-
-    text.split('').forEach((char, index) => {
-        if (char.toLowerCase() != char.toUpperCase()) {
-            // This is an alpha character
-            let cipherIndex = char.toLowerCase().charCodeAt(0) - 'a'.charCodeAt(0);
-            if (char.toLowerCase() == char) {
-                tmp += cipher[cipherIndex];
-            } else {
-                tmp += cipher[cipherIndex].toUpperCase();
-            }
-        } else {
-            tmp += char;
-        }
-    });
-
-    return tmp;
-}
-
-// This is just for the demo
-const demoCipher = data.cipher.split('').sort(() => { return 0.5 - Math.random() }).join('');
-data.encrypted = applyCipher(data.quote, demoCipher);
-//
 
 export default function Practice(props: any) {
 
-    const [decodedQuote, setDecodedQuote] = useState(data.encrypted);
-    const [cipher, setCipher] = useState(data.cipher);
+    const [decodedQuote, setDecodedQuote] = useState('');
+    const [replacements, setReplacements] = useState<ReplacementMap | null>();
+    const [challenge, setChallenge] = useState<{
+        challenge_id: string,
+        author: string,
+        encoded: string
+    } | null>();
 
-    const handleCipherChange = (newCipher: string) => {
-        setCipher(newCipher);
-        setDecodedQuote(applyCipher(data.encrypted, newCipher));
-    }
+    useEffect(() => {
+        let storedChallenge = JSON.parse(localStorage.getItem("challenge") ?? "{}");
+        
+        if (storedChallenge && storedChallenge.encoded) {
+            const storedDecoded = localStorage.getItem("decoded") ?? storedChallenge.encoded;
+            const storedReplacements = localStorage.getItem("replacements") ?? "{}";
+
+            setDecodedQuote(storedDecoded);
+            setReplacements(JSON.parse(storedReplacements));
+            setChallenge(storedChallenge);
+        } else {
+            startNewChallenge();
+        }
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem("challenge", JSON.stringify(challenge));
+    }, [challenge]);    
+
+    useEffect(() => {
+        localStorage.setItem("replacements", JSON.stringify(replacements));
+
+        if (replacements) {
+            let replacedText = "";
+            challenge?.encoded.split('').forEach(char => {
+                if(char.toLowerCase() in replacements) {
+                    let replacement = replacements[char.toLowerCase()];
+                    if(char === char.toUpperCase()) {
+                        replacedText += replacement.toUpperCase();
+                    } else {
+                        replacedText += replacement.toLowerCase();
+                    }
+                } else {
+                    replacedText += char;
+                }
+            });
+            localStorage.setItem("decoded", replacedText);
+        } else {
+            localStorage.setItem("decoded", challenge?.encoded ?? "");
+        }
+
+    }, [replacements]);    
 
     const handleCheckSolution = () => {
-        if (decodedQuote == data.quote) {
-            alert('Success! 🎊');
-        } else {
-            alert('Not quite! 🙅');
+        if (challenge) {
+            let request = {
+                challenge_id: challenge.challenge_id, 
+                decoded_text: decodedQuote
+            };
+            checkSolution(request).then((response: any) => {
+                console.dir(response.data);
+                if (response.data.correct) {
+                    alert("Well Done! 🎊 Try another one");
+                    startNewChallenge();
+                } else {
+                    alert("Not quite... Try again");
+                }
+            });
         }
+    }
+
+    const handleGiveUp = () => {
+        setChallenge(null);
+        setDecodedQuote('');
+    }
+
+    const handleTextChange = (newText: string, newReplacements: ReplacementMap) => {
+        setDecodedQuote(newText);
+        setReplacements(newReplacements);
+    }
+
+    const startNewChallenge = async () => {
+        let { challenge_id, encoded, author } = (await createChallenge()).data;
+
+        setChallenge({
+            challenge_id,
+            encoded,
+            author
+        });
     }
 
     return (
@@ -58,9 +103,15 @@ export default function Practice(props: any) {
             the text match.
         </p>
 
-        <TypeoverDecoder originalText={data.encrypted} onChange={(newText: string) => { setDecodedQuote(newText) }} />
-
-        <button onClick={handleCheckSolution} style={{marginTop: '20px'}}>Check solution</button>
+        { !challenge ?
+            <button onClick={startNewChallenge}>Start a new challenge</button> :
+            <>
+                <TypeoverDecoder originalText={challenge.encoded} onChange={handleTextChange} />
+                <i>{challenge.author}</i>
+                <button onClick={handleCheckSolution} style={{marginTop: '20px'}}>Check solution</button>
+                <button onClick={handleGiveUp} style={{marginTop: '20px'}}>Give Up</button>
+            </>
+        }       
     </>
     )
 }
