@@ -4,7 +4,7 @@ import styles from './TypeoverDecoder.module.css';
 export type DecoderProps = {
     originalText: string,
     startingReplacements?: ReplacementMap,
-    onChange: (newText: string) => void
+    onChange: (newText: string, replacements: ReplacementMap) => void
 }
 
 export type ReplacementMap = {
@@ -21,9 +21,11 @@ export function TypeoverDecoder({
     const [elements, setElements] = useState<JSX.Element[]>([]);
  
     useEffect(() => {
-        let text = runReplacements(replacements);
-        setElements(getElements(text));
-        onChange(text);
+        if (originalText) {
+            let text = runReplacements(replacements);
+            setElements(getElements(text));
+            onChange(text, replacements);
+        }
     }, [replacements]);
 
     useEffect(() => {
