@@ -1,4 +1,5 @@
 import {useEffect, useState, useRef} from 'react';
+import { ReplacementMap } from '../shared/interfaces/Replacement.interface';
 import styles from './TypeoverDecoder.module.css';
 
 export type DecoderProps = {
@@ -7,9 +8,6 @@ export type DecoderProps = {
     onChange: (newText: string, replacements: ReplacementMap) => void
 }
 
-export type ReplacementMap = {
-    [original: string]: string
-}
 
 export function TypeoverDecoder({
     originalText, startingReplacements, onChange

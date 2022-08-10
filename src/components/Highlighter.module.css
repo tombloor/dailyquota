@@ -1,0 +1,8 @@
+.highlighter {
+    white-space: pre-wrap; /* Fix for wrapping text on small screens */
+    font-size: 1.8em;
+}
+
+.highlighter .replaced {
+    color: #f0f;
+}

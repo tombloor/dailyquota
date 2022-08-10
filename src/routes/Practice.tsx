@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
-import { ReplacementMap, TypeoverDecoder } from '../components/TypeoverDecoder';
+import { TypeoverDecoder } from '../components/TypeoverDecoder';
+import { Highlighter } from '../components/Highlighter';
 
 import { createChallenge, checkSolution } from '../api/challengeAPI';
+import { ReplacementMap } from "../shared/interfaces/Replacement.interface";
 
 
 export default function Practice(props: any) {
@@ -106,6 +108,8 @@ export default function Practice(props: any) {
         { !challenge ?
             <button onClick={startNewChallenge}>Start a new challenge</button> :
             <>
+                <Highlighter original={challenge.encoded} modified={decodedQuote} />
+                <br />
                 <TypeoverDecoder originalText={challenge.encoded} onChange={handleTextChange} />
                 <i>{challenge.author}</i>
                 <button onClick={handleCheckSolution} style={{marginTop: '20px'}}>Check solution</button>
