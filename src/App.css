@@ -27,3 +27,24 @@ main {
   align-items: center;
   text-align: center;
 }
+
+.flex-column-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.buttonRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding: 5px;
+}
+
+.buttonRow button {
+  align-self: stretch;
+  text-align: center;
+  width: 100%;
+  margin: 5px;
+  padding: 10px;
+}

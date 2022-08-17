@@ -17,6 +17,6 @@
 } 
 
 .highlighter .cursor {
-    border-bottom: 2px solid #ddd;
-    animation: borderBlink 1s step-end infinite;    
+    border-bottom: 3px solid #ddd;
+    animation: borderBlink 1.5s step-end infinite;    
 }

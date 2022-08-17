@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { TypeoverDecoder } from '../components/TypeoverDecoder';
 import { Decoder } from '../components/Decoder';
 
 import { createChallenge, checkSolution } from '../api/challengeAPI';
@@ -101,21 +100,16 @@ export default function Practice(props: any) {
 
     return (
     <>
-        <h2>Practice Page</h2>
-        <p>
-            Right now this is just a demo of how the letter replacement will work. Try changing the letters to make
-            the text match.
-        </p>
-
+        <h2>Practice</h2>
         { !challenge ?
             <button onClick={startNewChallenge}>Start a new challenge</button> :
-            <>
+            <div className="flex-column-wrapper">
                 <Decoder original_text={challenge.encoded} modified_text={decodedQuote} author={challenge.author} updateCharacter={updateCharacter}></Decoder>
-                {/* <br />
-                <TypeoverDecoder originalText={challenge.encoded} onChange={handleTextChange} /> */}
-                <button onClick={handleCheckSolution} style={{marginTop: '20px'}}>Check solution</button>
-                <button onClick={handleGiveUp} style={{marginTop: '20px'}}>Give Up</button>
-            </>
+                <div className="buttonRow" style={{marginTop: 'auto'}}>
+                    <button onClick={handleCheckSolution}>Check solution</button>
+                    <button onClick={handleGiveUp}>Give Up</button>
+                </div>
+            </div>
         }       
     </>
     )
