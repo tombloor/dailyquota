@@ -48,3 +48,38 @@ main {
   margin: 5px;
   padding: 10px;
 }
+
+.disabled-link {
+  pointer-events: none;
+}
+
+.homeLinks {
+  display: flex;
+  flex-direction: column;
+}
+
+.homeLinks a {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  margin: 15px;
+  padding: 20px;
+  height: 150px;
+}
+
+.homeLinks a.disabled-link {
+  border: 1px solid #777;
+  color: #777;
+}
+
+.homeLinks a svg {
+  margin: 0 auto;
+  font-size: 90px;
+}
+
+.homeLinks a p {
+  margin-bottom: 0;
+}
