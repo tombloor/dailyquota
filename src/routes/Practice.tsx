@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
-import { ReplacementMap, TypeoverDecoder } from '../components/TypeoverDecoder';
+import { Decoder } from '../components/Decoder';
 
 import { createChallenge, checkSolution } from '../api/challengeAPI';
+import { ReplacementMap } from "../shared/interfaces/Replacement.interface";
+import { runReplacements } from "../shared/utilities"
 
 
 export default function Practice(props: any) {
@@ -37,24 +39,13 @@ export default function Practice(props: any) {
         localStorage.setItem("replacements", JSON.stringify(replacements));
 
         if (replacements) {
-            let replacedText = "";
-            challenge?.encoded.split('').forEach(char => {
-                if(char.toLowerCase() in replacements) {
-                    let replacement = replacements[char.toLowerCase()];
-                    if(char === char.toUpperCase()) {
-                        replacedText += replacement.toUpperCase();
-                    } else {
-                        replacedText += replacement.toLowerCase();
-                    }
-                } else {
-                    replacedText += char;
-                }
-            });
+            let replacedText = runReplacements(challenge!.encoded, replacements);
             localStorage.setItem("decoded", replacedText);
+            setDecodedQuote(replacedText);
         } else {
             localStorage.setItem("decoded", challenge?.encoded ?? "");
+            setDecodedQuote(challenge?.encoded ?? "");
         }
-
     }, [replacements]);    
 
     const handleCheckSolution = () => {
@@ -80,9 +71,21 @@ export default function Practice(props: any) {
         setDecodedQuote('');
     }
 
-    const handleTextChange = (newText: string, newReplacements: ReplacementMap) => {
-        setDecodedQuote(newText);
-        setReplacements(newReplacements);
+    // const handleTextChange = (newText: string, newReplacements: ReplacementMap) => {
+    //     setDecodedQuote(newText);
+    //     setReplacements(newReplacements);
+    // }
+
+    const updateCharacter = (oldChar: string, newChar: string) => {
+        let rep = {
+            ...replacements!
+        }
+        if (newChar === '') {
+            delete rep[oldChar];
+        } else {
+            rep[oldChar] = newChar;
+        } 
+        setReplacements(rep);
     }
 
     const startNewChallenge = async () => {
@@ -97,20 +100,16 @@ export default function Practice(props: any) {
 
     return (
     <>
-        <h2>Practice Page</h2>
-        <p>
-            Right now this is just a demo of how the letter replacement will work. Try changing the letters to make
-            the text match.
-        </p>
-
+        <h2>Practice</h2>
         { !challenge ?
             <button onClick={startNewChallenge}>Start a new challenge</button> :
-            <>
-                <TypeoverDecoder originalText={challenge.encoded} onChange={handleTextChange} />
-                <i>{challenge.author}</i>
-                <button onClick={handleCheckSolution} style={{marginTop: '20px'}}>Check solution</button>
-                <button onClick={handleGiveUp} style={{marginTop: '20px'}}>Give Up</button>
-            </>
+            <div className="flex-column-wrapper">
+                <Decoder original_text={challenge.encoded} modified_text={decodedQuote} author={challenge.author} updateCharacter={updateCharacter}></Decoder>
+                <div className="buttonRow" style={{marginTop: 'auto'}}>
+                    <button onClick={handleCheckSolution}>Check solution</button>
+                    <button onClick={handleGiveUp}>Give Up</button>
+                </div>
+            </div>
         }       
     </>
     )

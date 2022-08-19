@@ -1,0 +1,23 @@
+
+
+.keyboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+.keyboardRow {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.keyboardRow button {
+    font-family: 'Roboto Mono', monospace;
+    margin: 5px 3px;
+    font-size: 1em;
+    padding: 3px 6px;
+}
