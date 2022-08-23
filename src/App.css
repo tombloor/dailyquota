@@ -48,3 +48,17 @@ main {
   margin: 5px;
   padding: 10px;
 }
+
+.loading {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  font-size: larger;
+  color: white;
+  pointer-events: none;
+}

@@ -15,6 +15,7 @@ export default function Practice(props: any) {
         author: string,
         encoded: string
     } | null>();
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         let storedChallenge = JSON.parse(localStorage.getItem("challenge") ?? "{}");
@@ -89,13 +90,17 @@ export default function Practice(props: any) {
     }
 
     const startNewChallenge = async () => {
-        let { challenge_id, encoded, author } = (await createChallenge()).data;
+        setLoading(true);
 
-        setChallenge({
-            challenge_id,
-            encoded,
-            author
-        });
+        createChallenge().then(result => {
+            const { challenge_id, encoded, author } = result.data;
+            setChallenge({
+                challenge_id,
+                encoded,
+                author
+            });
+            setLoading(false);
+        })
     }
 
     return (
@@ -110,7 +115,10 @@ export default function Practice(props: any) {
                     <button onClick={handleGiveUp}>Give Up</button>
                 </div>
             </div>
-        }       
+        }     
+        { loading && 
+            <div className='loading'><p>Loading...</p></div>
+        } 
     </>
     )
 }
