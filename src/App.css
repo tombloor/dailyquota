@@ -27,3 +27,73 @@ main {
   align-items: center;
   text-align: center;
 }
+
+.flex-column-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.buttonRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding: 5px;
+}
+
+.buttonRow button {
+  align-self: stretch;
+  text-align: center;
+  width: 100%;
+  margin: 5px;
+  padding: 10px;
+}
+
+.disabled-link {
+  pointer-events: none;
+}
+
+.homeLinks {
+  display: flex;
+  flex-direction: column;
+}
+
+.homeLinks a {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  margin: 15px;
+  padding: 20px;
+  height: 150px;
+}
+
+.homeLinks a.disabled-link {
+  border: 1px solid #777;
+  color: #777;
+}
+
+.homeLinks a svg {
+  margin: 0 auto;
+  font-size: 90px;
+}
+
+.homeLinks a p {
+  margin-bottom: 0;
+}
+
+.loading {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  font-size: larger;
+  color: white;
+  pointer-events: none;
+}

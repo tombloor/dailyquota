@@ -1,0 +1,22 @@
+.highlighter {
+    white-space: pre-wrap; /* Fix for wrapping text on small screens */
+    font-size: 1.8em;
+}
+
+.highlighter .replaced {
+    color: #f0f;
+}
+
+@keyframes borderBlink {    
+    from, to {    
+        border-color: #ddd   
+    }    
+    50% {    
+        border-color: transparent    
+    }    
+} 
+
+.highlighter .cursor {
+    border-bottom: 3px solid #ddd;
+    animation: borderBlink 1.5s step-end infinite;    
+}
