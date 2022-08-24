@@ -8,7 +8,7 @@ import { runReplacements } from "../shared/utilities"
 
 export default function Practice(props: any) {
 
-    const [decodedQuote, setDecodedQuote] = useState('');
+    const [decodedQuote, setDecodedQuote] = useState<string | null>('');
     const [replacements, setReplacements] = useState<ReplacementMap | null>();
     const [challenge, setChallenge] = useState<{
         challenge_id: string,
@@ -18,15 +18,17 @@ export default function Practice(props: any) {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        let storedChallenge = JSON.parse(localStorage.getItem("challenge") ?? "{}");
-        
-        if (storedChallenge && storedChallenge.encoded) {
-            const storedDecoded = localStorage.getItem("decoded") ?? storedChallenge.encoded;
-            const storedReplacements = localStorage.getItem("replacements") ?? "{}";
+        const challengeJSON = localStorage.getItem("challenge");
 
-            setDecodedQuote(storedDecoded);
-            setReplacements(JSON.parse(storedReplacements));
+        if (challengeJSON) {
+            const storedChallenge = JSON.parse(challengeJSON);
             setChallenge(storedChallenge);
+
+            try {
+                setReplacements(JSON.parse(localStorage.getItem("replacements")!));
+            } catch {
+                //noop
+            }
         } else {
             startNewChallenge();
         }
@@ -35,21 +37,16 @@ export default function Practice(props: any) {
     useEffect(() => {
         if (challenge) {
             localStorage.setItem("challenge", JSON.stringify(challenge));
-        } else {
-            localStorage.removeItem("challenge");
-        }
+        } 
     }, [challenge]);    
 
     useEffect(() => {
         if (replacements) {
             localStorage.setItem("replacements", JSON.stringify(replacements));
             let replacedText = runReplacements(challenge!.encoded, replacements);
-            localStorage.setItem("decoded", replacedText);
             setDecodedQuote(replacedText);
         } else {
-            localStorage.removeItem("replacements");
-            localStorage.setItem("decoded", challenge?.encoded ?? "");
-            setDecodedQuote(challenge?.encoded ?? "");
+            setDecodedQuote(null);
         }
     }, [replacements]);    
 
@@ -57,7 +54,7 @@ export default function Practice(props: any) {
         if (challenge) {
             let request = {
                 challenge_id: challenge.challenge_id, 
-                decoded_text: decodedQuote
+                decoded_text: decodedQuote ?? ''
             };
             checkSolution(request).then((response: any) => {
                 console.dir(response.data);
@@ -72,8 +69,9 @@ export default function Practice(props: any) {
     }
 
     const handleGiveUp = () => {
+        localStorage.removeItem("challenge");
         setChallenge(null);
-        setDecodedQuote('');
+        localStorage.removeItem("replacements");
         setReplacements(null);
     }
 
@@ -99,6 +97,7 @@ export default function Practice(props: any) {
                 encoded,
                 author
             });
+            setDecodedQuote(encoded);
             setLoading(false);
         })
     }
@@ -109,7 +108,7 @@ export default function Practice(props: any) {
         { !challenge ?
             <button onClick={startNewChallenge}>Start a new challenge</button> :
             <div className="flex-column-wrapper">
-                <Decoder original_text={challenge.encoded} modified_text={decodedQuote} author={challenge.author} updateCharacter={updateCharacter}></Decoder>
+                <Decoder original_text={challenge.encoded} modified_text={decodedQuote ?? challenge.encoded} author={challenge.author} updateCharacter={updateCharacter}></Decoder>
                 <div className="buttonRow" style={{marginTop: 'auto'}}>
                     <button onClick={handleCheckSolution}>Check solution</button>
                     <button onClick={handleGiveUp}>Give Up</button>
