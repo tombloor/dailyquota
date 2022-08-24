@@ -15,13 +15,13 @@ export const Decoder = (props: DecoderProps) => {
 
     const moveCursorBack = () => {
         if (cursorPosition > 0) {
-            setCursorPosition(cursorPosition - 1);
+            setCursorPosition((pos) => pos - 1);
         }
     }
 
     const moveCursorForward = () => {
         if (cursorPosition < props.original_text.length) {
-            setCursorPosition(cursorPosition + 1);
+            setCursorPosition((pos) => pos + 1);
         }
     }
 
