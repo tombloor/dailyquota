@@ -33,17 +33,21 @@ export default function Practice(props: any) {
     }, []);
 
     useEffect(() => {
-        localStorage.setItem("challenge", JSON.stringify(challenge));
+        if (challenge) {
+            localStorage.setItem("challenge", JSON.stringify(challenge));
+        } else {
+            localStorage.removeItem("challenge");
+        }
     }, [challenge]);    
 
     useEffect(() => {
-        localStorage.setItem("replacements", JSON.stringify(replacements));
-
         if (replacements) {
+            localStorage.setItem("replacements", JSON.stringify(replacements));
             let replacedText = runReplacements(challenge!.encoded, replacements);
             localStorage.setItem("decoded", replacedText);
             setDecodedQuote(replacedText);
         } else {
+            localStorage.removeItem("replacements");
             localStorage.setItem("decoded", challenge?.encoded ?? "");
             setDecodedQuote(challenge?.encoded ?? "");
         }
@@ -70,12 +74,8 @@ export default function Practice(props: any) {
     const handleGiveUp = () => {
         setChallenge(null);
         setDecodedQuote('');
+        setReplacements(null);
     }
-
-    // const handleTextChange = (newText: string, newReplacements: ReplacementMap) => {
-    //     setDecodedQuote(newText);
-    //     setReplacements(newReplacements);
-    // }
 
     const updateCharacter = (oldChar: string, newChar: string) => {
         let rep = {
