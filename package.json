@@ -28,7 +28,7 @@
     "buildall": "react-scripts build && cd functions && npm run build && cd ..",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "emulate": "firebase emulators:start --only hosting,functions"
+    "emulate": "firebase emulators:start --only functions"
   },
   "eslintConfig": {
     "extends": [
