@@ -31,6 +31,15 @@ const applyCipher = (text: string, cipher:string) => {
 }
 
 export const requestChallenge = functions.https.onCall(async (params, context) => {
+    // context.app will be undefined if the request doesn't include an
+    // App Check token. (If the request includes an invalid App Check
+    // token, the request will be rejected with HTTP error 401.)
+    if (context.app == undefined) {
+        throw new functions.https.HttpsError(
+            'failed-precondition',
+            'The function must be called from an App Check verified app.')
+    }
+
     const quote = await getRandomQuote();
     if (quote) {
         await data.saveQuote(quote);
@@ -57,6 +66,12 @@ interface checkSolutionArgs {
 }
 
 export const checkSolution = functions.https.onCall(async (params: checkSolutionArgs, context) => {
+    if (context.app == undefined) {
+        throw new functions.https.HttpsError(
+            'failed-precondition',
+            'The function must be called from an App Check verified app.')
+    }
+    
     const { challenge_id, decoded_text } = params;
 
     const c = await data.getChallenge(challenge_id);
