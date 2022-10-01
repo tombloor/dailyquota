@@ -1,48 +1,21 @@
-https://coolors.co/222222-303030-3e7cb1-90e0ef
+# Daily Quota
 
-# Getting Started with Create React App
+A web game where you must correctly decode a scrambled famous quote by replacing the incorrect letters one by one.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Please try the game out for yourself [dailyquota.xyz](dailyquota.xyz).
 
-## Available Scripts
+Quotes provided by the [Quotable API](https://github.com/lukePeavey/quotable).
 
-In the project directory, you can run:
+## Current Features
 
-### `npm start`
+- Practice mode
+    - Get a random scrambled quote to practice decoding.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Planned Features
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- Daily challenge mode
+    - Everyday a new scrambled quote will be generated. This will be the same challenge for everyone each day
+    - See how many quotes you've decoded, as well as your daily streak with stats tracking.
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+- Leaderboards
+    - See how you compare with other players, see who was the first person to solve a daily challenge and how many attempts it took them.
