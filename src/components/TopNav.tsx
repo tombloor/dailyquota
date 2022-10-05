@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 import HomeIcon from '@mui/icons-material/Home';
 import LeaderboardIcon from '@mui/icons-material/Leaderboard';
-import RateReviewIcon from '@mui/icons-material/RateReview';
+import GitHubIcon from '@mui/icons-material/GitHub';
 
 import '../App.css';
 import styles from './TopNav.module.css';
@@ -29,9 +29,9 @@ export default function TopNav(props: NavProps) {
                     </Link>
                 </li>
                 <li>
-                    <Link to='/feedback'>
-                        <RateReviewIcon titleAccess='Feedback' to='/feedback' />
-                    </Link>
+                    <a href='https://github.com/tombloor/dailyquota'>
+                        <GitHubIcon titleAccess='GitHub' to='https://github.com/tombloor/dailyquota' />
+                    </a>
                 </li>
             </ul>
         </header>

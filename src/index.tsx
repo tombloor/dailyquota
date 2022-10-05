@@ -6,7 +6,6 @@ import reportWebVitals from './reportWebVitals';
 
 import Home from './routes/Home';
 import Leaderboard from './routes/Leaderboard';
-import Feedback from './routes/Feedback';
 import Practice from './routes/Practice';
 
 import {
@@ -28,7 +27,6 @@ root.render(
           <Route index element={<Home />} />
           <Route path='/home' element={<Home />} />
           <Route path='/leaderboard' element={<Leaderboard />} />
-          <Route path='/feedback' element={<Feedback />} />
           <Route path='/practice' element={<Practice />} />
           <Route path="*" element={<Navigate to='/' />}>
           </Route>
