@@ -2,119 +2,139 @@ import { useState, useEffect } from "react";
 import { Decoder } from '../components/Decoder';
 
 import { createChallenge, checkSolution } from '../api/challengeAPI';
-import { ReplacementMap } from "../shared/interfaces/Replacement.interface";
-import { runReplacements } from "../shared/utilities"
+import { getCharacterStates, runReplacements } from "../shared/utilities"
+import { GameState } from "../shared/interfaces/GameState.interface";
 
 
 export default function Practice(props: any) {
 
-    const [decodedQuote, setDecodedQuote] = useState<string | null>('');
-    const [replacements, setReplacements] = useState<ReplacementMap | null>();
-    const [challenge, setChallenge] = useState<{
-        challenge_id: string,
-        author: string,
-        encoded: string
-    } | null>();
+    const [gameState, setGameState] = useState<GameState | null>(null);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        const challengeJSON = localStorage.getItem("challenge");
+        const gameStateJSON = localStorage.getItem("gameState");
 
-        if (challengeJSON) {
-            const storedChallenge = JSON.parse(challengeJSON);
-            setChallenge(storedChallenge);
-
-            try {
-                setReplacements(JSON.parse(localStorage.getItem("replacements")!));
-            } catch {
-                //noop
-            }
-        } else {
-            startNewChallenge();
-        }
+        if (gameStateJSON) {
+            let state = JSON.parse(gameStateJSON);
+            setGameState(state);
+        } 
     }, []);
 
     useEffect(() => {
-        if (challenge) {
-            localStorage.setItem("challenge", JSON.stringify(challenge));
-        } 
-    }, [challenge]);    
+        if (gameState) {
+            localStorage.setItem('gameState', JSON.stringify(gameState));
+        } else {
+            localStorage.removeItem('gameState');
+        }
+    }, [gameState]);
 
     useEffect(() => {
-        if (replacements) {
-            localStorage.setItem("replacements", JSON.stringify(replacements));
-            let replacedText = runReplacements(challenge!.encoded, replacements);
-            setDecodedQuote(replacedText);
-        } else {
-            setDecodedQuote(null);
+        if (gameState) {
+            let newState = {
+                ...gameState
+            };
+    
+            if (newState.challenge) {
+                newState.currentText = runReplacements(newState.challenge.encoded, newState.replacements);
+                newState.characterStates = getCharacterStates(newState.challenge.encoded, newState.replacements, newState.correctCharacters);
+            }
+    
+            setGameState(newState);
         }
-    }, [replacements]);    
+    }, [gameState?.replacements, gameState?.correctCharacters]);
 
     const handleCheckSolution = () => {
-        if (challenge) {
+        if (gameState && gameState.challenge) {
             let request = {
-                challenge_id: challenge.challenge_id, 
-                decoded_text: decodedQuote ?? ''
+                challenge_id: gameState.challenge.challenge_id,
+                decoded_text: gameState.currentText
             };
+            
             checkSolution(request).then((response: any) => {
-                console.dir(response.data);
                 if (response.data.correct) {
                     alert("Well Done! 🎊 Try another one");
                     startNewChallenge();
                 } else {
                     alert("Not quite... Try again");
+                    setGameState({...gameState, correctCharacters: response.data.correctCharacters});
                 }
             });
         }
+
+
+        // if (challenge) {
+        //     let request = {
+        //         challenge_id: challenge.challenge_id, 
+        //         decoded_text: decodedQuote ?? ''
+        //     };
+        //     checkSolution(request).then((response: any) => {
+        //         console.dir(response.data);
+        //         if (response.data.correct) {
+        //             alert("Well Done! 🎊 Try another one");
+        //             startNewChallenge();
+        //         } else {
+        //             alert("Not quite... Try again");
+        //             setCorrect(response.data.correctCharacters);
+        //         }
+        //     });
+        // }
     }
 
     const handleGiveUp = () => {
-        localStorage.removeItem("challenge");
-        setChallenge(null);
-        localStorage.removeItem("replacements");
-        setReplacements(null);
+        localStorage.removeItem("gameState");
+        setGameState(null);
     }
 
     const updateCharacter = (oldChar: string, newChar: string) => {
-        let rep = {
-            ...replacements!
+        if (gameState) {
+            let replacements = {...gameState.replacements};
+            if(newChar === '') {
+                delete replacements[oldChar];
+            } else {
+                replacements[oldChar] = newChar;
+            }
+
+            setGameState({...gameState, replacements: replacements});
         }
-        if (newChar === '') {
-            delete rep[oldChar];
-        } else {
-            rep[oldChar] = newChar;
-        } 
-        setReplacements(rep);
     }
 
     const startNewChallenge = async () => {
         setLoading(true);
 
         createChallenge().then(result => {
-            const { challenge_id, encoded, author } = result.data;
-            setChallenge({
-                challenge_id,
-                encoded,
-                author
+            const { challenge_id, encoded, author, correctCharacters } = result.data;
+
+            setGameState({
+                ...gameState,
+                challenge: { challenge_id, author, encoded },
+                currentText: encoded,
+                correctCharacters: correctCharacters,
+                replacements: {},
+                characterStates: []
             });
-            setDecodedQuote(encoded);
+
             setLoading(false);
-        })
+        });
     }
 
     return (
     <>
         <h2>Practice</h2>
-        { !challenge ?
+        { !gameState || !gameState.challenge ?
             <button onClick={startNewChallenge}>Start a new challenge</button> :
             <div className="flex-column-wrapper">
-                <Decoder original_text={challenge.encoded} modified_text={decodedQuote ?? challenge.encoded} author={challenge.author} updateCharacter={updateCharacter}></Decoder>
+                <Decoder 
+                        original_text={gameState.challenge.encoded} 
+                        modified_text={gameState.currentText ?? gameState.challenge.encoded} 
+                        author={gameState.challenge.author} 
+                        updateCharacter={updateCharacter}
+                        characterStates={gameState.characterStates}></Decoder>
                 <div className="buttonRow" style={{marginTop: 'auto'}}>
                     <button onClick={handleCheckSolution}>Check solution</button>
                     <button onClick={handleGiveUp}>Give Up</button>
                 </div>
             </div>
-        }     
+        }
         { loading && 
             <div className='loading'><p>Loading...</p></div>
         } 

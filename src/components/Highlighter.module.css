@@ -7,6 +7,10 @@
     color: #f0f;
 }
 
+.highlighter .correct {
+    color: rgb(9, 255, 0);
+}
+
 @keyframes borderBlink {    
     from, to {    
         border-color: #ddd   
