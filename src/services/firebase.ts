@@ -1,3 +1,5 @@
+/*eslint no-restricted-globals: ["warn"]*/
+
 import { initializeApp } from 'firebase/app';
 //import { getFirestore } from 'firebase/firestore';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
@@ -16,13 +18,17 @@ const firebaseConfig = {
 
 export const app = initializeApp(firebaseConfig);
 //export const db = getFirestore(app);
+
 export const functions = getFunctions(app);
+// We are running in the firebase emulator environment
+if (window.location.hostname === "localhost" && window.location.port === "5000") {
+    //@ts-ignore
+    self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+    connectFunctionsEmulator(functions, "localhost", 5001);
+}
+
 export const appCheck = initializeAppCheck(app, { 
     provider: new ReCaptchaV3Provider('6LcX4hEiAAAAAIaDIfXsD8ca9hrTupH-dVpLGNY9'),
     isTokenAutoRefreshEnabled: true
 });
 
-// We are running in the firebase emulator environment
-if (window.location.hostname === "localhost" && window.location.port === "5000") {
-    connectFunctionsEmulator(functions, "localhost", 5001);
-}

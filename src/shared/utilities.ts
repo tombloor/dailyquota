@@ -33,3 +33,29 @@ export const runReplacements = (originalText: string, r: ReplacementMap): string
 
     return replacedText;
 }
+
+export enum CharacterState {
+    NotLetter = -1,
+    None = 0,
+    Replaced = 1,
+    Correct = 2
+}
+export const getCharacterStates = (originalText: string, replacements: ReplacementMap, correct: number[]): CharacterState[] => {
+    let states: CharacterState[] = Array(originalText.length).fill(CharacterState.None);
+
+    for(let i = 0; i < originalText.length; i++) {
+        if (isLetter(originalText[i])) {
+            if (correct.includes(i)) {
+                states[i] = CharacterState.Correct
+            } else if (originalText[i].toLowerCase() in replacements) {
+                states[i] = CharacterState.Replaced;
+            } else {
+                states[i] = CharacterState.None
+            }
+        } else {
+            states[i] = CharacterState.NotLetter;
+        }
+    }
+
+    return states;
+}

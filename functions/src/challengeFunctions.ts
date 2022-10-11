@@ -3,9 +3,7 @@ import { Challenge } from "./models";
 import { getRandomQuote } from './services/quotable'
 import * as data from './services/data'
 
-const generateRandomCipher = (min_hints?: number, max_hints?: number) => {
-    //TODO: Implement hints, will be represented by capital letters in the cipher
-    // These will be automatically filled in and locked for the user to make it easier
+const generateRandomCipher = () => {
     const cipher = 'abcdefghijklmnopqrstuvwxyz'.split('').sort(() => { return 0.5 - Math.random() }).join('');
     return cipher;
 }
@@ -30,11 +28,22 @@ const applyCipher = (text: string, cipher:string) => {
     return tmp;
 }
 
+const getCorrectCharacters = (original: string, modified: string): number[] => {
+    let result: number[] = []
+    for (let i = 0; i < original.length; i++) {
+        if (original[i] === modified[i]) {
+            result.push(i);
+        }
+    }
+
+    return result;
+}
+
 export const requestChallenge = functions.https.onCall(async (params, context) => {
     // context.app will be undefined if the request doesn't include an
     // App Check token. (If the request includes an invalid App Check
     // token, the request will be rejected with HTTP error 401.)
-    if (context.app == undefined) {
+    if (context.app == undefined && !process.env.FUNCTIONS_EMULATOR) {
         throw new functions.https.HttpsError(
             'failed-precondition',
             'The function must be called from an App Check verified app.')
@@ -54,7 +63,8 @@ export const requestChallenge = functions.https.onCall(async (params, context) =
         return {
             challenge_id: newChallenge.id,
             encoded: newChallenge.encoded,
-            author: quote.author?.name
+            author: quote.author?.name,
+            correctCharacters: getCorrectCharacters(quote.text, newChallenge.encoded)
         }
     } 
     return {};
@@ -66,7 +76,7 @@ interface checkSolutionArgs {
 }
 
 export const checkSolution = functions.https.onCall(async (params: checkSolutionArgs, context) => {
-    if (context.app == undefined) {
+    if (context.app == undefined && !process.env.FUNCTIONS_EMULATOR) {
         throw new functions.https.HttpsError(
             'failed-precondition',
             'The function must be called from an App Check verified app.')
@@ -94,6 +104,7 @@ export const checkSolution = functions.https.onCall(async (params: checkSolution
     }
 
     return {
-        correct: false
+        correct: false,
+        correctCharacters: c ? getCorrectCharacters(c.original, decoded_text) : []
     }
 });
