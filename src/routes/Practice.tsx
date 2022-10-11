@@ -45,12 +45,14 @@ export default function Practice(props: any) {
 
     const handleCheckSolution = () => {
         if (gameState && gameState.challenge) {
+            setLoading(true);
             let request = {
                 challenge_id: gameState.challenge.challenge_id,
                 decoded_text: gameState.currentText
             };
             
             checkSolution(request).then((response: any) => {
+                setLoading(false);
                 if (response.data.correct) {
                     alert("Well Done! 🎊 Try another one");
                     startNewChallenge();

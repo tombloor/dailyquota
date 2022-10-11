@@ -9,6 +9,7 @@
 
 .highlighter .correct {
     color: rgb(9, 255, 0);
+    font-weight: bold;
 }
 
 @keyframes borderBlink {    
