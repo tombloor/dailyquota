@@ -28,7 +28,7 @@ export const Decoder = (props: DecoderProps) => {
         }
     }
 
-    const moveCursorBack = () => {
+    const moveCursorBack = (erase = false) => {
         let newPosition = cursorPosition - 1;
 
         while (newPosition >= 0 && !editableStates.includes(props.characterStates[newPosition])) {
@@ -37,6 +37,10 @@ export const Decoder = (props: DecoderProps) => {
 
         if (newPosition >= 0) {
             setCursorPosition(newPosition);
+            if (erase) {
+                const oldChar = props.original_text[newPosition].toLowerCase();
+                props.updateCharacter(oldChar, '');
+            }
         }
     }
 
