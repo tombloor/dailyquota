@@ -59,8 +59,8 @@ export const KeyboardInput = (props: KeyboardInputProps) => {
                         return <button onClick={() => props.onKeyPress(char)}>{char}</button>
                     }) 
                 }
-                <button onClick={() => props.onCursorBack}>&lt;</button>
-                <button onClick={() => props.onCursorForward}>&gt;</button>
+                <button onClick={() => props.onCursorBack()}>&lt;</button>
+                <button onClick={() => props.onCursorForward()}>&gt;</button>
                 <button onClick={() => props.onKeyPress('')}>Clear</button>
             </div>
         </div>
