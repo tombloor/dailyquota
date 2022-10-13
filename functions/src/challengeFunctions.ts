@@ -29,7 +29,7 @@ const applyCipher = (text: string, cipher:string) => {
 }
 
 const getCorrectCharacters = (original: string, modified: string): number[] => {
-    let result: number[] = []
+    const result: number[] = []
     for (let i = 0; i < original.length; i++) {
         if (original[i] === modified[i]) {
             result.push(i);
