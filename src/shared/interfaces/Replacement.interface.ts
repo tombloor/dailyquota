@@ -1,5 +1,5 @@
 
 
-export type ReplacementMap = {
+export interface ReplacementMap {
     [original: string]: string
 }
