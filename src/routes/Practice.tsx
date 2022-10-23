@@ -4,12 +4,14 @@ import { Decoder } from '../components/Decoder';
 import { createChallenge, checkSolution } from '../api/challengeAPI';
 import { getCharacterStates, runReplacements } from "../shared/utilities"
 import { GameState } from "../shared/interfaces/GameState.interface";
+import Modal from "../components/Modal";
 
 
 export default function Practice(props: any) {
 
     const [gameState, setGameState] = useState<GameState | null>(null);
     const [loading, setLoading] = useState(false);
+    const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
 
     useEffect(() => {
         const gameStateJSON = localStorage.getItem("gameState");
@@ -54,32 +56,13 @@ export default function Practice(props: any) {
             checkSolution(request).then((response: any) => {
                 setLoading(false);
                 if (response.data.correct) {
-                    alert("Well Done! 🎊 Try another one");
-                    startNewChallenge();
+                    setIsCorrect(true);
                 } else {
-                    alert("Not quite... Try again");
+                    setIsCorrect(false);
                     setGameState({...gameState, correctCharacters: response.data.correctCharacters});
                 }
             });
         }
-
-
-        // if (challenge) {
-        //     let request = {
-        //         challenge_id: challenge.challenge_id, 
-        //         decoded_text: decodedQuote ?? ''
-        //     };
-        //     checkSolution(request).then((response: any) => {
-        //         console.dir(response.data);
-        //         if (response.data.correct) {
-        //             alert("Well Done! 🎊 Try another one");
-        //             startNewChallenge();
-        //         } else {
-        //             alert("Not quite... Try again");
-        //             setCorrect(response.data.correctCharacters);
-        //         }
-        //     });
-        // }
     }
 
     const handleGiveUp = () => {
@@ -119,6 +102,17 @@ export default function Practice(props: any) {
         });
     }
 
+    const handleModalClose = () => {
+        setIsCorrect(null);
+    }
+
+    const handleModalOk = () => {
+        if (isCorrect) {
+            startNewChallenge();
+        } 
+        setIsCorrect(null);
+    }
+
     return (
     <>
         <h2>Practice</h2>
@@ -137,9 +131,21 @@ export default function Practice(props: any) {
                 </div>
             </div>
         }
-        { loading && 
-            <div className='loading'><p>Loading...</p></div>
-        } 
+
+        <Modal open={loading}>
+            <p>Loading...</p>
+        </Modal>
+
+        <Modal open={isCorrect != null} requestClose={handleModalClose} showHeader={true} okText={isCorrect ? "Start new challenge" : "Ok"} onOk={handleModalOk}>
+            { isCorrect ?
+                <>
+                    <h4>You got it!</h4>
+                    <p>Now try another one</p> 
+                </>
+                :
+                <p>Not quite...Try again</p>
+            }
+        </Modal>
     </>
     )
 }
