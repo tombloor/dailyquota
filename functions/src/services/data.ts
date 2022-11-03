@@ -1,5 +1,5 @@
 import { db } from './firebase';
-import { Challenge, Quote } from '../models'
+import { Challenge, Quote, Daily } from '../models'
 
 // Checkout the docs on firestore converters for a nice way to map interfaces 
 
@@ -62,4 +62,18 @@ export const createChallenge = async (quote: Quote, cipher: string, encoded: str
     challengeDoc.id = result.id;
 
     return challengeDoc;
+};
+
+export const createDaily = async (challenge_id: string, start: Date, end: Date): Promise<Daily> => {
+    const dailyCollection = db.collection('daily');
+    const dailyDoc: Daily = {
+        challenge_id: challenge_id,
+        start: start,
+        end: end
+    };
+
+    const result = await dailyCollection.add(dailyDoc);
+    dailyDoc.id = result.id;
+
+    return dailyDoc;
 };
