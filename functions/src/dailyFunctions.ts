@@ -1,7 +1,7 @@
 import * as functions from "firebase-functions";
 import { requestNewChallenge, createDailyChallenge } from "./services/challenge";
 
-export const startNewDailyChallenge = functions.pubsub.schedule('0 7 * * *')
+export const startNewDailyChallenge = functions.pubsub.schedule('0 4 * * *')
     .timeZone("America/Chicago")
     .onRun(async (context) => 
     {
@@ -14,10 +14,7 @@ export const startNewDailyChallenge = functions.pubsub.schedule('0 7 * * *')
         if (challenge?.id)
         {
             let daily = await createDailyChallenge(challenge.id, new Date());
-
-            if (daily) {
-                // Update config for current challenge to be this id
-            }
+            functions.logger.info(daily);
         }
     }
 );

@@ -66,14 +66,21 @@ export const createChallenge = async (quote: Quote, cipher: string, encoded: str
 
 export const createDaily = async (challenge_id: string, start: Date, end: Date): Promise<Daily> => {
     const dailyCollection = db.collection('daily');
+    
+    const year = start.toLocaleString("default", { year: "numeric" });
+    const month = start.toLocaleString("default", { month: "2-digit" });
+    const day = start.toLocaleString("default", { day: "2-digit" });
+    
+    let newId = 'daily-' + year + month + day;
+    
     const dailyDoc: Daily = {
+        id: newId,
         challenge_id: challenge_id,
         start: start,
         end: end
     };
 
-    const result = await dailyCollection.add(dailyDoc);
-    dailyDoc.id = result.id;
+    await dailyCollection.doc(newId).set(dailyDoc);
 
     return dailyDoc;
 };

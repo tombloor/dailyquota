@@ -48,7 +48,7 @@ export const createDailyChallenge = async (challenge_id: string, now: Date): Pro
 
     let end = new Date(start.getTime());
     end.setDate(end.getDate() + 1);
-    end.setHours(6, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
 
     let daily = await data.createDaily(challenge_id, start, end);
 
