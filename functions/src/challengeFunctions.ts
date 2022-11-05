@@ -1,32 +1,6 @@
 import * as functions from "firebase-functions";
-import { Challenge } from "./models";
-import { getRandomQuote } from './services/quotable'
-import * as data from './services/data'
-
-const generateRandomCipher = () => {
-    const cipher = 'abcdefghijklmnopqrstuvwxyz'.split('').sort(() => { return 0.5 - Math.random() }).join('');
-    return cipher;
-}
-
-const applyCipher = (text: string, cipher:string) => {
-    let tmp = '';
-
-    text.split('').forEach((char, index) => {
-        if (char.toLowerCase() != char.toUpperCase()) {
-            // This is an alpha character
-            const cipherIndex = char.toLowerCase().charCodeAt(0) - 'a'.charCodeAt(0);
-            if (char.toLowerCase() == char) {
-                tmp += cipher[cipherIndex];
-            } else {
-                tmp += cipher[cipherIndex].toUpperCase();
-            }
-        } else {
-            tmp += char;
-        }
-    });
-
-    return tmp;
-}
+import { requestNewChallenge } from "./services/challenge";
+import * as data from "./services/data";
 
 const getCorrectCharacters = (original: string, modified: string): number[] => {
     const result: number[] = []
@@ -49,25 +23,21 @@ export const requestChallenge = functions.https.onCall(async (params, context) =
             'The function must be called from an App Check verified app.')
     }
 
-    const quote = await getRandomQuote();
-    if (quote) {
-        await data.saveQuote(quote);
+    let challenge = await requestNewChallenge();
+        
+    functions.logger.info(challenge);
 
-        const cipher = generateRandomCipher();
-        const encoded = applyCipher(quote.text, cipher);
-
-        const newChallenge: Challenge = await data.createChallenge(quote, cipher, encoded);
-
-        functions.logger.info(newChallenge);
-
+    if (challenge)
+    {
         return {
-            challenge_id: newChallenge.id,
-            encoded: newChallenge.encoded,
-            author: quote.author?.name,
-            correctCharacters: getCorrectCharacters(quote.text, newChallenge.encoded)
+            challenge_id: challenge.id,
+            encoded: challenge.encoded,
+            author: challenge.author,
+            correctCharacters: getCorrectCharacters(challenge.original, challenge.encoded)
         }
-    } 
-    return {};
+    }
+    
+    throw new functions.https.HttpsError('internal', 'No challenge was created');
 });
 
 interface checkSolutionArgs {
