@@ -43,14 +43,14 @@ export const requestNewChallenge = async (): Promise<Challenge | null> => {
 }
 
 export const createDailyChallenge = async (challenge_id: string, now: Date): Promise<Daily | null> => {
-    let start =  new Date(now.getTime());
+    const start =  new Date(now.getTime());
     start.setHours(13, 0, 0, 0);
 
-    let end = new Date(start.getTime());
+    const end = new Date(start.getTime());
     end.setDate(end.getDate() + 1);
     end.setHours(5, 0, 0, 0);
 
-    let daily = await data.createDaily(challenge_id, start, end);
+    const daily = await data.createDaily(challenge_id, start, end);
 
     return daily;
 }

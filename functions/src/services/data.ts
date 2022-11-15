@@ -71,7 +71,7 @@ export const createDaily = async (challenge_id: string, start: Date, end: Date):
     const month = start.toLocaleString("default", { month: "2-digit" });
     const day = start.toLocaleString("default", { day: "2-digit" });
     
-    let newId = 'daily-' + year + month + day;
+    const newId = 'daily-' + year + month + day;
     
     const dailyDoc: Daily = {
         id: newId,

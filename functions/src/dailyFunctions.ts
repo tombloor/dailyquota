@@ -6,15 +6,15 @@ export const forceNewDailyChallenge = functions.https.onRequest(async (req, resp
     {
         functions.logger.info('Creating new daily challenge');
     
-        let challenge = await requestNewChallenge();
+        const challenge = await requestNewChallenge();
             
         functions.logger.info(challenge);
 
-        let startDate = new Date();
+        const startDate = new Date();
     
         if (challenge?.id)
         {
-            let daily = await createDailyChallenge(challenge.id, startDate);
+            const daily = await createDailyChallenge(challenge.id, startDate);
             functions.logger.info(daily);
 
             return resp.end('ok');
@@ -31,15 +31,15 @@ export const startNewDailyChallenge = functions.pubsub.schedule('0 7 * * *')
     {
         functions.logger.info('Creating new daily challenge');
 
-        let challenge = await requestNewChallenge();
+        const challenge = await requestNewChallenge();
             
         functions.logger.info(challenge);
 
-        let startDate = new Date();
+        const startDate = new Date();
     
         if (challenge?.id)
         {
-            let daily = await createDailyChallenge(challenge.id, startDate);
+            const daily = await createDailyChallenge(challenge.id, startDate);
             functions.logger.info(daily);
 
             return true;

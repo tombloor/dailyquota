@@ -23,7 +23,7 @@ export const requestChallenge = functions.https.onCall(async (params, context) =
             'The function must be called from an App Check verified app.')
     }
 
-    let challenge = await requestNewChallenge();
+    const challenge = await requestNewChallenge();
         
     functions.logger.info(challenge);
 
