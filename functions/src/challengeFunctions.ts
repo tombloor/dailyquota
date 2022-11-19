@@ -1,17 +1,6 @@
 import * as functions from "firebase-functions";
-import { requestNewChallenge } from "./services/challenge";
+import { requestNewChallenge, getCorrectCharacters } from "./services/challenge";
 import * as data from "./services/data";
-
-const getCorrectCharacters = (original: string, modified: string): number[] => {
-    const result: number[] = []
-    for (let i = 0; i < original.length; i++) {
-        if (original[i] === modified[i]) {
-            result.push(i);
-        }
-    }
-
-    return result;
-}
 
 export const requestChallenge = functions.https.onCall(async (params, context) => {
     // context.app will be undefined if the request doesn't include an

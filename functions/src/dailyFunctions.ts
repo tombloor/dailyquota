@@ -1,6 +1,6 @@
 import * as functions from "firebase-functions";
-import { requestNewChallenge, createDailyChallenge } from "./services/challenge";
-import { getDaily } from "./services/data";
+import { requestNewChallenge, createDailyChallenge, getCorrectCharacters } from "./services/challenge";
+import { getChallenge, getDaily } from "./services/data";
 
 export const forceNewDailyChallenge = functions.https.onRequest(async (req, resp): Promise<any> => {
     if (process.env.FUNCTIONS_EMULATOR)
@@ -53,3 +53,47 @@ export const startNewDailyChallenge = functions.pubsub.schedule('0 7 * * *')
         return false;
     }
 );
+
+export const getCurrentDailyChallenge = functions.https.onCall(async (params, context) => {
+    if (context.app == undefined && !process.env.FUNCTIONS_EMULATOR) {
+        throw new functions.https.HttpsError(
+            'failed-precondition',
+            'The function must be called from an App Check verified app.')
+    }
+
+    const now = new Date();
+    const daily = await getDaily(now);
+
+    if (daily) {
+        let resp: any = {
+            startsIn: 0,
+            endsIn: 0,
+            challenge_id: null,
+            author: null,
+            encoded: null,
+            correctCharacters: null
+        }
+
+        if (now < daily.start) {
+            resp.startsIn = daily.start.getTime() - now.getTime();
+        } else if (now > daily.end) {
+            resp.endsIn = daily.end.getTime() - now.getTime();
+        } else if (daily.challenge_id) {
+            const challenge = await getChallenge(daily.challenge_id);
+
+            if (challenge) {
+                resp.challenge_id = challenge.id;
+                resp.encoded = challenge.encoded;
+                resp.author = challenge.author;
+                resp.correctCharacters = getCorrectCharacters(challenge.original, challenge.encoded);
+            } else {
+                functions.logger.error('Daily is missing a challenge');
+                return new functions.https.HttpsError('internal', 'Daily challenge is invalid');
+            }
+        }
+        
+        return resp;
+    }
+
+    return new functions.https.HttpsError('not-found', 'No daily challenge could be found for the specified date');
+})

@@ -27,6 +27,17 @@ const applyCipher = (text: string, cipher:string) => {
     return tmp;
 }
 
+export const getCorrectCharacters = (original: string, modified: string): number[] => {
+    const result: number[] = []
+    for (let i = 0; i < original.length; i++) {
+        if (original[i] === modified[i]) {
+            result.push(i);
+        }
+    }
+
+    return result;
+}
+
 export const requestNewChallenge = async (): Promise<Challenge | null> => {
     const quote = await getRandomQuote();
     if (quote) {
